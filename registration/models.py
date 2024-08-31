@@ -92,18 +92,18 @@ class Qarrj_Hasana_Apply(models.Model):
     
     source_of_income = models.CharField(max_length=255)
     
-    total_monthly_income = models.DecimalField(max_digits=15, decimal_places=2)
-    total_monthly_expense = models.DecimalField(max_digits=15, decimal_places=2)
+    total_monthly_income = models.PositiveIntegerField(default=0)
+    total_monthly_expense = models.PositiveIntegerField(default=0)
 
-    loan_amount = models.DecimalField(max_digits=15, decimal_places=2)
-    monthly_savings_amount = models.DecimalField(max_digits=15, decimal_places=2)
-    monthly_installment_amount = models.DecimalField(max_digits=15, decimal_places=2)
-    total_unpaid_installment_amount = models.DecimalField(max_digits=15, decimal_places=2)
+    loan_amount = models.DecimalField(max_digits=15, decimal_places=0)
+    monthly_savings_amount = models.DecimalField(max_digits=15, decimal_places=0)
+    monthly_installment_amount = models.DecimalField(max_digits=15, decimal_places=0)
+    total_unpaid_installment_amount = models.DecimalField(max_digits=15, decimal_places=0)
     
     have_bangla_translated_if_quran = models.BooleanField(default=False)
     recite_quran_daily = models.BooleanField(default=False)
     
-    income_expense_diff_amount = models.DecimalField(max_digits=15, decimal_places=2, editable=False, default=0.00)
+    income_expense_diff_amount = models.DecimalField(max_digits=15, decimal_places=0, editable=False, default=0.00)
     
     def save(self, *args, **kwargs):
         # Calculate the income-expense difference before saving

@@ -43,7 +43,8 @@ class QarrjHasanaApplyAdmin(admin.ModelAdmin):
     list_filter = (
         'qarrj_hasana__mosque', 'have_bangla_translated_if_quran', 'recite_quran_daily'
     )
-    readonly_fields = ('income_expense_diff_amount',)  # Make the calculated field read-only
+    # readonly_fields = ('income_expense_diff_amount',)  # Make the calculated field read-only
+    exclude = ('income_expense_diff_amount',)
     
     def get_readonly_fields(self, request, obj=None):
         # Optionally, make income_expense_diff_amount read-only only when editing
