@@ -1,5 +1,11 @@
 from django.contrib import admin
-from .models import Mosque,Bank, MobileBank, Qarrj_Hasana_Account,Qarrj_Hasana_Apply
+from decimal import Decimal
+from .models import Global_Settings, Mosque,Bank, MobileBank, Qarrj_Hasana_Account,Qarrj_Hasana_Apply,Zakat_Wallet, Zakat_Provider
+
+
+@admin.register(Global_Settings)
+class GlobalSettingsAdmin(admin.ModelAdmin):
+    list_display = ('service_charge_percentage',)
 
 class MosqueAdmin(admin.ModelAdmin):
     # Display these fields in the list view
@@ -51,3 +57,39 @@ class QarrjHasanaApplyAdmin(admin.ModelAdmin):
         if obj:
             return self.readonly_fields + ('form_no',)  # Add form_no to readonly fields if needed
         return self.readonly_fields
+    
+
+
+@admin.register(Zakat_Wallet)
+class ZakatWalletAdmin(admin.ModelAdmin):
+    list_display = ('mosque', 'total_amount', 'disbursable_amount')
+    # Enable search functionality
+    search_fields = ('mosque__mosque_name','mosque__id')  # Search by mosque name
+
+    # Enable filters
+    list_filter = ('mosque__district', 'mosque__division')  # Filter by mosque's district and division
+    
+    readonly_fields = ('total_amount', 'disbursable_amount')
+
+class ZakatProviderAdmin(admin.ModelAdmin):
+    list_display = ('mosque', 'name', 'contact_number', 'donation_amount', 'donation_date')
+    search_fields = ('name', 'contact_number', 'mosque__mosque_name')
+    list_filter = ('mosque__district', 'donation_date')
+
+    def save_model(self, request, obj, form, change):
+        # Call the parent save method to handle the rest of the save operation
+        super().save_model(request, obj, form, change)
+        
+        # Get or create the Zakat Wallet for the specific mosque
+        zakat_wallet, created = Zakat_Wallet.objects.get_or_create(mosque=obj.mosque)
+        
+        # Ensure total_amount is treated as Decimal
+        zakat_wallet.total_amount = Decimal(zakat_wallet.total_amount)
+        
+        if obj.donation_amount and obj.donation_amount > Decimal('0.00'):
+            # Only add donation amount if it's a new entry or if donation_amount has changed
+            if not change or (obj.donation_amount and obj.donation_amount > Decimal('0.00')):
+                zakat_wallet.total_amount += obj.donation_amount
+                zakat_wallet.save()
+
+admin.site.register(Zakat_Provider, ZakatProviderAdmin)

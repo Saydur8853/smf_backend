@@ -1,4 +1,11 @@
 from django.db import models
+from decimal import Decimal
+
+class Global_Settings(models.Model):
+    service_charge_percentage = models.DecimalField(max_digits=5, decimal_places=2, default=Decimal('0.00'))
+
+    def __str__(self):
+        return f"Global Settings - Service Charge: {self.service_charge_percentage}%"
 
 class Mosque(models.Model):
     mosque_name = models.CharField(max_length=255)  # Required by default
@@ -112,3 +119,35 @@ class Qarrj_Hasana_Apply(models.Model):
     
     def __str__(self):
         return f"Application {self.form_no} - {self.qarrj_hasana.name}"
+    
+
+
+
+class Zakat_Wallet(models.Model):
+    mosque = models.OneToOneField('Mosque', on_delete=models.CASCADE)  # Each mosque has one Zakat Wallet
+    total_amount = models.DecimalField(max_digits=15, decimal_places=2, default=Decimal('0.00'))
+    
+    @property
+    def disbursable_amount(self):
+        # Fetch the global settings
+        global_settings = Global_Settings.objects.first()
+        if not global_settings:
+            return self.total_amount
+        
+        # Calculate disbursable amount using the global service charge percentage
+        service_charge_percentage = global_settings.service_charge_percentage
+        return self.total_amount - (self.total_amount * service_charge_percentage / Decimal(100))
+    
+    def __str__(self):
+        return f"Zakat Wallet for {self.mosque.mosque_name}"
+    
+class Zakat_Provider(models.Model):
+    mosque = models.ForeignKey('Mosque', on_delete=models.CASCADE)
+    name = models.CharField(max_length=255)
+    contact_number = models.CharField(max_length=15)
+    address = models.CharField(max_length=255)
+    donation_amount = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
+    donation_date = models.DateField(auto_now_add=True)
+    
+    def __str__(self):
+        return f"{self.name} - Donation: {self.donation_amount or 'No Donation'}"
