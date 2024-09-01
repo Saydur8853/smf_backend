@@ -138,6 +138,18 @@ class Zakat_Wallet(models.Model):
         service_charge_percentage = global_settings.service_charge_percentage
         return self.total_amount - (self.total_amount * service_charge_percentage / Decimal(100))
     
+    @property
+    def approved_zakat_holders_count(self):
+        # Count the number of approved Zakat_Receiver for this mosque
+        return Zakat_Receiver.objects.filter(mosque=self.mosque, verification=True).count()
+    
+    @property
+    def zakat_amount_for_each_person(self):
+        # Calculate zakat amount for each person
+        if self.approved_zakat_holders_count > 0:
+            return self.disbursable_amount / self.approved_zakat_holders_count
+        return Decimal('0.00')
+    
     def __str__(self):
         return f"Zakat Wallet for {self.mosque.mosque_name}"
     
@@ -151,3 +163,100 @@ class Zakat_Provider(models.Model):
     
     def __str__(self):
         return f"{self.name} - Donation: {self.donation_amount or 'No Donation'}"
+    
+
+
+class Zakat_Receiver(models.Model):
+    mosque = models.ForeignKey('Mosque', on_delete=models.CASCADE)
+    name = models.CharField(max_length=255)
+    phone_number = models.CharField(max_length=15)
+    address = models.CharField(max_length=255)
+    nid_no = models.CharField(max_length=20)
+    
+    bank = models.ForeignKey(
+        'Bank',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True
+    )
+    bank_account_number = models.CharField(max_length=50, blank=True, null=True)
+    
+    mobile_bank = models.ForeignKey(
+        'MobileBank',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True
+    )
+    mobile_bank_number = models.CharField(max_length=15, blank=True, null=True)
+    
+    form_no = models.AutoField(primary_key=True)
+    
+    head_of_family_name = models.CharField(max_length=255, blank=True, null=True)
+    total_members_boy = models.PositiveIntegerField(default=0, blank=True, null=True)
+    total_members_girl = models.PositiveIntegerField(default=0, blank=True, null=True)
+    total_workable_persons = models.PositiveIntegerField(default=0, blank=True, null=True)
+    total_earnable_persons = models.PositiveIntegerField(default=0, blank=True, null=True)
+    
+    source_of_income = models.CharField(max_length=255, blank=True, null=True)
+    
+    total_monthly_income = models.PositiveIntegerField(default=0, blank=True, null=True)
+    total_monthly_expense = models.PositiveIntegerField(default=0, blank=True, null=True)
+
+    loan_amount = models.DecimalField(max_digits=15, decimal_places=0, blank=True, null=True)
+    monthly_savings_amount = models.DecimalField(max_digits=15, decimal_places=0, blank=True, null=True)
+    monthly_installment_amount = models.DecimalField(max_digits=15, decimal_places=0, blank=True, null=True)
+    total_unpaid_installment_amount = models.DecimalField(max_digits=15, decimal_places=0, blank=True, null=True)
+    
+    have_bangla_translated_if_quran = models.BooleanField(default=False)
+    recite_quran_daily = models.BooleanField(default=False)
+    
+    income_expense_diff_amount = models.DecimalField(max_digits=15, decimal_places=0, editable=False, default=0.00, blank=True, null=True)
+    
+    verification = models.BooleanField(default=False)
+
+    def save(self, *args, **kwargs):
+        # Calculate the income-expense difference before saving
+        self.income_expense_diff_amount = self.total_monthly_income - self.total_monthly_expense
+        
+        # Handle verification and distribute zakat funds
+        if self.verification:
+            # Get the mosque's zakat wallet
+            
+            
+            # Get all verified receivers for this mosque
+            verified_receivers = Zakat_Receiver.objects.filter(mosque=self.mosque, verification=True)
+            total_receivers = verified_receivers.count()
+            
+            if total_receivers > 0:
+                mosque_wallet = Zakat_Wallet.objects.get(mosque=self.mosque)
+                # Calculate the share for each receiver
+                share_amount = mosque_wallet.disbursable_amount / total_receivers
+                
+                # Create or update the personal zakat wallet for this receiver
+                personal_wallet, created = Personal_Zakat_Wallet.objects.get_or_create(receiver=self)
+                personal_wallet.amount = share_amount
+                personal_wallet.save()
+        
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"#{self.form_no} - {self.name} ({self.mosque.mosque_name})"
+
+class Personal_Zakat_Wallet(models.Model):
+    receiver = models.OneToOneField('Zakat_Receiver', on_delete=models.CASCADE)
+    amount = models.DecimalField(max_digits=15, decimal_places=2, default=Decimal('0.00'))
+    @property
+    def amount(self):
+        # Fetch the Zakat_Wallet for the receiver's mosque
+        zakat_wallet = Zakat_Wallet.objects.filter(mosque=self.receiver.mosque).first()
+        if zakat_wallet:
+            return zakat_wallet.zakat_amount_for_each_person
+        return Decimal('0.00')
+
+    def save(self, *args, **kwargs):
+        # Set the amount to zakat_amount_for_each_person before saving
+        self.amount = self.amount
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"Personal Zakat Wallet for {self.receiver.name} - Amount: {self.amount}"

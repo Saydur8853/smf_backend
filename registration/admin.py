@@ -1,6 +1,6 @@
 from django.contrib import admin
 from decimal import Decimal
-from .models import Global_Settings, Mosque,Bank, MobileBank, Qarrj_Hasana_Account,Qarrj_Hasana_Apply,Zakat_Wallet, Zakat_Provider
+from .models import Global_Settings, Mosque,Bank, MobileBank, Qarrj_Hasana_Account,Qarrj_Hasana_Apply, Zakat_Wallet, Zakat_Provider,Zakat_Receiver, Personal_Zakat_Wallet
 
 
 @admin.register(Global_Settings)
@@ -62,14 +62,23 @@ class QarrjHasanaApplyAdmin(admin.ModelAdmin):
 
 @admin.register(Zakat_Wallet)
 class ZakatWalletAdmin(admin.ModelAdmin):
-    list_display = ('mosque', 'total_amount', 'disbursable_amount')
+    list_display = ('mosque', 'total_amount', 'disbursable_amount', 'approved_zakat_holders_count','zakat_amount_for_each_person')
+    
     # Enable search functionality
-    search_fields = ('mosque__mosque_name','mosque__id')  # Search by mosque name
+    search_fields = ('mosque__mosque_name', 'mosque__id')  # Search by mosque name
 
     # Enable filters
     list_filter = ('mosque__district', 'mosque__division')  # Filter by mosque's district and division
     
-    readonly_fields = ('total_amount', 'disbursable_amount')
+    readonly_fields = ('total_amount', 'disbursable_amount', 'approved_zakat_holders_count', 'zakat_amount_for_each_person')
+
+    def has_add_permission(self, request):
+        # Prevent manual creation of Personal Zakat Wallets from the admin interface
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        # Prevent deletion of Personal Zakat Wallets from the admin interface
+        return False
 
 class ZakatProviderAdmin(admin.ModelAdmin):
     list_display = ('mosque', 'name', 'contact_number', 'donation_amount', 'donation_date')
@@ -93,3 +102,30 @@ class ZakatProviderAdmin(admin.ModelAdmin):
                 zakat_wallet.save()
 
 admin.site.register(Zakat_Provider, ZakatProviderAdmin)
+
+
+
+class ZakatReceiverAdmin(admin.ModelAdmin):
+    list_display = ('name', 'mosque', 'phone_number', 'nid_no', 'verification')
+    search_fields = ('name', 'phone_number', 'nid_no', 'mosque__mosque_name')
+    list_filter = ('verification', 'mosque__district')
+    
+    def save_model(self, request, obj, form, change):
+        # Ensure that the save method logic in the model is respected
+        super().save_model(request, obj, form, change)
+
+class PersonalZakatWalletAdmin(admin.ModelAdmin):
+    list_display = ('receiver', 'amount')
+    search_fields = ('receiver__name', 'receiver__mosque__mosque_name')
+    
+    def has_add_permission(self, request):
+        # Prevent manual creation of Personal Zakat Wallets from the admin interface
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        # Prevent deletion of Personal Zakat Wallets from the admin interface
+        return False
+
+
+admin.site.register(Zakat_Receiver, ZakatReceiverAdmin)
+admin.site.register(Personal_Zakat_Wallet, PersonalZakatWalletAdmin)
