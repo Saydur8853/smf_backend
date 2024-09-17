@@ -9,7 +9,7 @@ class GlobalSettingsAdmin(admin.ModelAdmin):
 
 class MosqueAdmin(admin.ModelAdmin):
     # Display these fields in the list view
-    list_display = ('id','mosque_name', 'village', 'district', 'thana', 'division', 'imam_name', 'imam_mobile_number', 'muazzin_name', 'muazzin_mobile_number')
+    list_display = ('id','mosque_id','mosque_name', 'village', 'district', 'thana', 'division', 'imam_name', 'imam_mobile_number', 'muazzin_name', 'muazzin_mobile_number')
     
     # Enable searching by these fields
     search_fields = ('mosque_name', 'village', 'district', 'imam_name','imam_mobile_number', 'muazzin_name', 'muazzin_mobile_number')

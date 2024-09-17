@@ -7,7 +7,9 @@ class Global_Settings(models.Model):
     def __str__(self):
         return f"Global Settings - Service Charge: {self.service_charge_percentage}%"
 
+
 class Mosque(models.Model):
+    mosque_id = models.CharField(max_length=10, editable=False, unique=True, blank=True)  # Unique mosque ID
     mosque_name = models.CharField(max_length=255)  # Required by default
     
     # Address fields
@@ -24,12 +26,21 @@ class Mosque(models.Model):
     muazzin_name = models.CharField(max_length=255, blank=True, null=True)
     muazzin_mobile_number = models.CharField(max_length=15, blank=True, null=True)
     
+    def save(self, *args, **kwargs):
+        if not self.mosque_id:
+            # Generate mosque_id
+            last_mosque = Mosque.objects.order_by('id').last()
+            if last_mosque:
+                last_id = int(last_mosque.mosque_id[1:])  # Remove 'M' and convert to int
+                new_id = last_id + 1
+            else:
+                new_id = 1
+            self.mosque_id = f"M{new_id:03d}"  # Format as M001, M002, etc.
+        super().save(*args, **kwargs)
+
     def __str__(self):
-        return f"#{self.id} - {self.mosque_name},{self.village},{self.district},{self.thana},{self.division}"
+        return f"#{self.mosque_id} - {self.mosque_name},{self.village},{self.district},{self.thana},{self.division}"
 
-
-
-from django.db import models
 
 # Bank Model
 class Bank(models.Model):
