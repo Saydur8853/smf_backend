@@ -1,5 +1,7 @@
 from django.db import models
 from decimal import Decimal
+from django.contrib.auth.hashers import make_password
+
 
 class Global_Settings(models.Model):
     service_charge_percentage = models.DecimalField(max_digits=5, decimal_places=2, default=Decimal('0.00'))
@@ -57,6 +59,38 @@ class MobileBank(models.Model):
         return self.name
 
 # Qarrj_Hasana Model
+# class Qarrj_Hasana_Account(models.Model):
+#     mosque = models.ForeignKey(
+#         'Mosque',
+#         on_delete=models.CASCADE,
+#         related_name='qarrj_hasana_entries'
+#     )
+    
+#     name = models.CharField(max_length=255)
+#     phone_number = models.CharField(max_length=15)
+#     email = models.CharField(max_length=15, blank=True, null=True)
+#     address = models.CharField(max_length=255)
+#     nid_no = models.CharField(max_length=20)
+    
+#     bank = models.ForeignKey(
+#         'Bank',
+#         on_delete=models.SET_NULL,
+#         null=True,
+#         blank=True
+#     )
+#     bank_account_number = models.CharField(max_length=50, blank=True, null=True)
+    
+#     mobile_bank = models.ForeignKey(
+#         'MobileBank',
+#         on_delete=models.SET_NULL,
+#         null=True,
+#         blank=True
+#     )
+#     mobile_bank_number = models.CharField(max_length=15, blank=True, null=True)
+    
+#     def __str__(self):
+#         return f"#{self.id}-{self.name} ({self.mosque.mosque_name})"
+
 class Qarrj_Hasana_Account(models.Model):
     mosque = models.ForeignKey(
         'Mosque',
@@ -68,7 +102,8 @@ class Qarrj_Hasana_Account(models.Model):
     phone_number = models.CharField(max_length=15)
     email = models.CharField(max_length=15, blank=True, null=True)
     address = models.CharField(max_length=255)
-    nid_no = models.CharField(max_length=20)
+    nid_no = models.CharField(max_length=30, unique=True)  # Unique constraint added
+    password = models.CharField(max_length=128)
     
     bank = models.ForeignKey(
         'Bank',
@@ -85,10 +120,15 @@ class Qarrj_Hasana_Account(models.Model):
         blank=True
     )
     mobile_bank_number = models.CharField(max_length=15, blank=True, null=True)
+
     
+
     def __str__(self):
         return f"#{self.id}-{self.name} ({self.mosque.mosque_name})"
-
+    
+    def save(self, *args, **kwargs):
+        self.password = make_password(self.password)
+        super(Qarrj_Hasana_Account, self).save(*args, **kwargs)
 
 
 
