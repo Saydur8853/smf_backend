@@ -262,6 +262,7 @@ class Zakat_Receiver(models.Model):
     recite_quran_daily = models.BooleanField(default=False)
     
     income_expense_diff_amount = models.DecimalField(max_digits=15, decimal_places=0, editable=False, default=0.00, blank=True, null=True)
+    note = models.CharField(max_length=300, blank=True, null=True)
     
     verification = models.BooleanField(default=False)
 
