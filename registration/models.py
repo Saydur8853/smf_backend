@@ -2,6 +2,37 @@ from django.db import models
 from decimal import Decimal
 from django.contrib.auth.hashers import make_password
 
+from django.utils.safestring import mark_safe
+
+class HomePageModel(models.Model):
+    smf_logo = models.ImageField(upload_to='logos/', blank=True, null=True)
+    
+
+    def admin_photo(self):
+        return mark_safe('<img src="{}" width="100" />'.format(self.smf_logo.url))
+    admin_photo.short_description = 'Image'
+    admin_photo.allow_tags= True
+    
+
+    def __str__(self):
+        return self.smf_logo.name.split('/')[-1] if self.smf_logo else "No logo uploaded"
+
+class BannerModel(models.Model):
+    banner_image = models.ImageField(upload_to='banner/', blank=True, null=True)
+
+    def admin_photo(self):
+        if self.banner_image:
+            return mark_safe(
+                f'<img src="{self.banner_image.url}" width="100" height="60" '
+                f'style="margin-right: 2px; border: 2px solid green;"/>'
+            )
+        return "No image"
+
+    admin_photo.short_description = 'Image'
+
+    def __str__(self):
+        return self.banner_image.name.split('/')[-1] if self.banner_image else "No image uploaded"
+
 
 class Global_Settings(models.Model):
     service_charge_percentage = models.DecimalField(max_digits=5, decimal_places=2, default=Decimal('0.00'))

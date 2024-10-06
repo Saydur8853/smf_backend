@@ -1,7 +1,18 @@
 from django.contrib import admin
 from decimal import Decimal
-from .models import Global_Settings, Mosque,Bank, MobileBank, Qarrj_Hasana_Account,Qarrj_Hasana_Apply, Zakat_Wallet, Zakat_Provider,Zakat_Receiver, Personal_Zakat_Wallet
+from .models import HomePageModel,BannerModel,Global_Settings, Mosque,Bank, MobileBank, Qarrj_Hasana_Account,Qarrj_Hasana_Apply, Zakat_Wallet, Zakat_Provider,Zakat_Receiver, Personal_Zakat_Wallet
+from django.contrib import admin
 
+
+
+@admin.register(HomePageModel)
+class HomePageModelAdmin(admin.ModelAdmin):
+    list_display = ("admin_photo",)
+
+@admin.register(BannerModel)
+class BannerModelAdmin(admin.ModelAdmin):
+    list_display = ("admin_photo",)
+    
 
 @admin.register(Global_Settings)
 class GlobalSettingsAdmin(admin.ModelAdmin):
