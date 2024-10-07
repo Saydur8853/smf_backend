@@ -61,14 +61,6 @@ $(document).ready(function () {
         }
     }
 
-    // Prevent form submission for demo purposes
-    const form = document.getElementById('registrationForm');
-    form.onsubmit = function (event) {
-        event.preventDefault();
-        alert('Mosque registered successfully!');
-        modal.style.display = 'none';
-    }
-
 });
 // Open the modal when the apply button is clicked
 document.querySelectorAll('.apply-btn').forEach(button => {

@@ -2,21 +2,22 @@
 
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>SMF</title>
-        <link rel="stylesheet" href="{% static 'style.css' %}"> 
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
-        <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/typed.js/2.0.11/typed.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/waypoints/4.0.1/jquery.waypoints.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
-        <link rel="stylesheet"
-            href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css" />
-    
-    </head>
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SMF</title>
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/typed.js/2.0.11/typed.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/waypoints/4.0.1/jquery.waypoints.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css" />
+
+</head>
 
 <body>
     <div class="scroll-up-btn">
@@ -27,10 +28,10 @@
             <div class="logo">
                 <!-- {% load static %}
                 <a href="#"><img src="{% static "smflogo.png" %}" alt="logo"></a> -->
-                
+
                 <a href="#">
                     {% if home_page.smf_logo %}
-                        <img src="{{ home_page.smf_logo.url }}" alt="logo">
+                    <img src="{{ home_page.smf_logo.url }}" alt="logo">
                     {% endif %}
                 </a>
             </div>
@@ -48,74 +49,128 @@
             </div>
         </div>
     </nav>
-    <!-- Modal Box -->
+
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+   
     <div id="registrationModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2>Register Mosque</h2>
-            <form id="registrationForm">
-                <div class="form-row">
-                    <div class="form-column">
-                        <label for="mosqueName">Mosque Name</label>
-                        <input type="text" id="mosqueName" name="mosqueName" required>
-
-                        <label for="village">Village</label>
-                        <input type="text" id="village" name="village" required>
-
-                        <label for="district">District</label>
-                        <input type="text" id="district" name="district" required>
-
-                        <label for="thana">Thana</label>
-                        <input type="text" id="thana" name="thana" required>
-
-                        <label for="division">Division</label>
-                        <input type="text" id="division" name="division" required>
-                    </div>
-                    <div class="form-column">
-                        <label for="imamName">Imam Name</label>
-                        <input type="text" id="imamName" name="imamName" required>
-
-                        <label for="imamMobile">Imam Mobile Number</label>
-                        <input type="text" id="imamMobile" name="imamMobile" required>
-
-                        <label for="muazzinName">Muazzin Name</label>
-                        <input type="text" id="muazzinName" name="muazzinName" required>
-
-                        <label for="muazzinMobile">Muazzin Mobile Number</label>
-                        <input type="text" id="muazzinMobile" name="muazzinMobile" required>
-                    </div>
-                </div>
-                <button type="submit" class="btn">Register Mosque</button>
-            </form>
+        {% if form.errors %}
+        <div class="alert alert-danger">
+            Please correct the errors below.
         </div>
+        {% endif %}
+    <!-- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Mosque Registration</h2>
+
+        <!-- Use Django form submission within the modal -->
+        <form id="registrationForm" method="POST" novalidate>
+            {% csrf_token %}
+            <div class="form-row">
+                <div class="form-column">
+                    <!-- Mosque Name -->
+                    <label class="form-label {% if form.mosque_name.field.required %}required-field{% endif %}">
+                        {{ form.mosque_name.label }}
+                    </label>
+                    {{ form.mosque_name }}
+                    <div class="text-danger">{{ form.mosque_name.errors }}</div>
+
+                    <!-- Village -->
+                    <label class="form-label {% if form.village.field.required %}required-field{% endif %}">
+                        {{ form.village.label }}
+                    </label>
+                    {{ form.village }}
+                    <div class="text-danger">{{ form.village.errors }}</div>
+
+                    <!-- District -->
+                    <label class="form-label {% if form.district.field.required %}required-field{% endif %}">
+                        {{ form.district.label }}
+                    </label>
+                    {{ form.district }}
+                    <div class="text-danger">{{ form.district.errors }}</div>
+
+                    <!-- Thana -->
+                    <label class="form-label {% if form.thana.field.required %}required-field{% endif %}">
+                        {{ form.thana.label }}
+                    </label>
+                    {{ form.thana }}
+                    <div class="text-danger">{{ form.thana.errors }}</div>
+
+                    <!-- Division -->
+                    <label class="form-label {% if form.division.field.required %}required-field{% endif %}">
+                        {{ form.division.label }}
+                    </label>
+                    {{ form.division }}
+                    <div class="text-danger">{{ form.division.errors }}</div>
+                </div>
+
+                <div class="form-column">
+                    <!-- Imam Name -->
+                    <label class="form-label {% if form.imam_name.field.required %}required-field{% endif %}">
+                        {{ form.imam_name.label }}
+                    </label>
+                    {{ form.imam_name }}
+                    <div class="text-danger">{{ form.imam_name.errors }}</div>
+
+                    <!-- Imam Mobile Number -->
+                    <label class="form-label {% if form.imam_mobile_number.field.required %}required-field{% endif %}">
+                        {{ form.imam_mobile_number.label }}
+                    </label>
+                    {{ form.imam_mobile_number }}
+                    <div class="text-danger">{{ form.imam_mobile_number.errors }}</div>
+
+                    <!-- Muazzin Name -->
+                    <label class="form-label {% if form.muazzin_name.field.required %}required-field{% endif %}">
+                        {{ form.muazzin_name.label }}
+                    </label>
+                    {{ form.muazzin_name }}
+                    <div class="text-danger">{{ form.muazzin_name.errors }}</div>
+
+                    <!-- Muazzin Mobile Number -->
+                    <label class="form-label {% if form.muazzin_mobile_number.field.required %}required-field{% endif %}">
+                        {{ form.muazzin_mobile_number.label }}
+                    </label>
+                    {{ form.muazzin_mobile_number }}
+                    <div class="text-danger">{{ form.muazzin_mobile_number.errors }}</div>
+                </div>
+            </div>
+
+            <button type="submit" class="btn">Register Mosque</button>
+        </form>
     </div>
+</div>
+<!-- Alert Section -->
+{% if messages %}
+    <div class="alert-container">
+        {% for message in messages %}
+        <div class="alert {% if message.tags %}alert-{{ message.tags }}{% else %}alert-info{% endif %} alert-dismissible fade show"
+            role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %}
+    </div>
+{% endif %}
+
     <div class="container">
         <div class="arrow arrow-left"><i class="fas fa-chevron-circle-left"></i></div>
         {% for banner in banners %}
-            <img src="{{ banner.banner_image.url }}" alt="Banner"> 
+        <img src="{{ banner.banner_image.url }}" alt="Banner">
         {% endfor %}
         <div class="arrow arrow-right"><i class="fas fa-chevron-circle-right"></i></div>
         <div class="dots">
             {% for banner in banners %}
-              <div class="dot">
+            <div class="dot">
                 {% if forloop.first %}
-                  <i class="far fa-dot-circle"></i>  <!-- Active dot -->
+                <i class="far fa-dot-circle"></i> <!-- Active dot -->
                 {% else %}
-                  <i class="far fa-circle"></i>       <!-- Inactive dots -->
+                <i class="far fa-circle"></i> <!-- Inactive dots -->
                 {% endif %}
-              </div>
+            </div>
             {% endfor %}
         </div>
-      </div>
-    <!-- <section class="home" id="home">
-        <div class="carousel">
-            <div class="carousel-images">
-                {% for banner in banners %}
-                    <img src="{{ banner.banner_image.url }}" alt="Banner"> 
-                {% endfor %}
-            </div>
-        </div>
-    </section> -->
+    </div>
+
     <section class="notice-section">
         <div class="notice-container">
             <h3>Latest News</h3>
@@ -346,152 +401,158 @@
         </div>
 
 
-    <!-- Zakat Modal -->
-    <div id="zakatModal" class="modal">
-        <div class="modal-content">
-            <span class="close" id="closeZakatModal">&times;</span>
-            <h3>Select Zakat Option</h3>
-            <div class="zakat-options">
-                <button id="zakatProviderBtn">Zakat Provider</button>
-                <button id="zakatReceiverBtn">Zakat Receiver</button>
+        <!-- Zakat Modal -->
+        <div id="zakatModal" class="modal">
+            <div class="modal-content">
+                <span class="close" id="closeZakatModal">&times;</span>
+                <h3>Select Zakat Option</h3>
+                <div class="zakat-options">
+                    <button id="zakatProviderBtn">Zakat Provider</button>
+                    <button id="zakatReceiverBtn">Zakat Receiver</button>
+                </div>
             </div>
         </div>
-    </div>
-  
- <!-- Zakat Provider Form Modal -->
- <div id="zakatProviderModal" class="modal">
-    <div class="modal-content">
-        <span class="close" id="closeZakatProviderModal">&times;</span>
-        <h3>Zakat Provider Form</h3>
-        <form id="zakatProviderForm" class="form-layout">
-            <div class="form-group">
-                <label>Mosque Name:</label><input type="text" name="mosque-name" required>
-            </div>
-            <div class="form-group">
-                <label>Provider Name:</label><input type="text" name="provider-name" required>
-            </div>
-            <div class="form-group">
-                <label>Contact Number:</label><input type="text" name="contact-number" required>
-            </div>
-            <div class="form-group">
-                <label>Address:</label><input type="text" name="address" required>
-            </div>
-            <div class="form-group">
-                <label>Donation Amount:</label><input type="number" name="donation-amount" required>
-            </div>
-            <div class="form-group">
-                <label>Donation Date:</label><input type="date" name="donation-date" required>
-            </div>
-            <button type="submit" class="btn">Submit</button>
-        </form>
-    </div>
-</div>
 
-<!-- Zakat Receiver Form Modal -->
-<div id="zakatReceiverModal" class="modal">
-    <div class="modal-content">
-        <span class="close" id="closeZakatReceiverModal">&times;</span>
-        <h3>Zakat Receiver Form</h3>
-        <form id="zakatReceiverForm" class="form-layout">
-            <div class="form-group">
-                <label>Mosque Name:</label><input type="text" name="mosque-name" required>
+        <!-- Zakat Provider Form Modal -->
+        <div id="zakatProviderModal" class="modal">
+            <div class="modal-content">
+                <span class="close" id="closeZakatProviderModal">&times;</span>
+                <h3>Zakat Provider Form</h3>
+                <form id="zakatProviderForm" class="form-layout">
+                    <div class="form-group">
+                        <label>Mosque Name:</label><input type="text" name="mosque-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Provider Name:</label><input type="text" name="provider-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Contact Number:</label><input type="text" name="contact-number" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Address:</label><input type="text" name="address" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Donation Amount:</label><input type="number" name="donation-amount" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Donation Date:</label><input type="date" name="donation-date" required>
+                    </div>
+                    <button type="submit" class="btn">Submit</button>
+                </form>
             </div>
-            <div class="form-group">
-                <label>Name:</label><input type="text" name="name" required>
+        </div>
+
+        <!-- Zakat Receiver Form Modal -->
+        <div id="zakatReceiverModal" class="modal">
+            <div class="modal-content">
+                <span class="close" id="closeZakatReceiverModal">&times;</span>
+                <h3>Zakat Receiver Form</h3>
+                <form id="zakatReceiverForm" class="form-layout">
+                    <div class="form-group">
+                        <label>Mosque Name:</label><input type="text" name="mosque-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Name:</label><input type="text" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Phone Number:</label><input type="text" name="phone-number" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Address:</label><input type="text" name="address" required>
+                    </div>
+                    <div class="form-group">
+                        <label>NID Number:</label><input type="text" name="nid-no" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="bankingOption">Banking Option:</label>
+                        <select id="bankingOption" required>
+                            <option value="">Select Bank</option>
+                            <option value="bank1">Bank 1</option>
+                            <option value="bank2">Bank 2</option>
+                            <option value="bank3">Bank 3</option>
+                            <option value="bank4">Bank 4</option>
+                            <option value="bank5">Bank 5</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Bank Account Number:</label><input type="text" name="bank-account-number" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Mobile Financial Service Options</label>
+                        <select name="mobile-bank" required>
+                            <option value="" disabled selected>Select MFS</option>
+                            <option value="Mobile Bank 1">Nagad</option>
+                            <option value="Mobile Bank 2">Bkash</option>
+                            <option value="Mobile Bank 3">Upay</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Mobile Financial Service Number:</label><input type="text" name="mobile-bank-number"
+                            required>
+                    </div>
+                    <div class="form-group">
+                        <label>Form No:</label><input type="text" name="form-no" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Head of Family Name:</label><input type="text" name="head-of-family-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Total Members (Boys):</label><input type="number" name="total-members-boy" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Total Members (Girls):</label><input type="number" name="total-members-girl" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Total Workable Persons:</label><input type="number" name="total-workable-persons"
+                            required>
+                    </div>
+                    <div class="form-group">
+                        <label>Total Earnable Persons:</label><input type="number" name="total-earnable-persons"
+                            required>
+                    </div>
+                    <div class="form-group">
+                        <label>Source of Income:</label><input type="text" name="source-of-income" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="total-monthly-income">Total Monthly Income</label>
+                        <input type="number" class="monthly-income" name="total-monthly-income" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="total-monthly-expense">Total Monthly Expense</label>
+                        <input type="number" class="monthly-expense" name="total-monthly-expense" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Loan Amount:</label><input type="number" name="loan-amount" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Monthly Savings Amount:</label><input type="number" name="monthly-savings-amount"
+                            required>
+                    </div>
+                    <div class="form-group">
+                        <label>Monthly Installment Amount:</label><input type="number" name="monthly-installment-amount"
+                            required>
+                    </div>
+                    <div class="form-group">
+                        <label>Total Unpaid Installment Amount:</label><input type="number"
+                            name="total-unpaid-installment-amount" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Have Bangla Translated Quran?</label><input type="checkbox" name="translated-quran">
+                    </div>
+                    <div class="form-group">
+                        <label>Recite Quran Daily?</label><input type="checkbox" name="recite-quran-daily">
+                    </div>
+                    <div class="form-group">
+                        <label for="income-expense-diff">Income-Expense Difference</label>
+                        <input type="number" class="income-expense-diff" name="income-expense-diff" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>Note:</label><textarea name="note"></textarea>
+                    </div>
+                    <button type="submit" class="btn">Submit</button>
+                </form>
             </div>
-            <div class="form-group">
-                <label>Phone Number:</label><input type="text" name="phone-number" required>
-            </div>
-            <div class="form-group">
-                <label>Address:</label><input type="text" name="address" required>
-            </div>
-            <div class="form-group">
-                <label>NID Number:</label><input type="text" name="nid-no" required>
-            </div>
-            <div class="form-group">
-                <label for="bankingOption">Banking Option:</label>
-                            <select id="bankingOption" required>
-                                <option value="">Select Bank</option>
-                                <option value="bank1">Bank 1</option>
-                                <option value="bank2">Bank 2</option>
-                                <option value="bank3">Bank 3</option>
-                                <option value="bank4">Bank 4</option>
-                                <option value="bank5">Bank 5</option>
-                            </select>
-            </div>
-            <div class="form-group">
-                <label>Bank Account Number:</label><input type="text" name="bank-account-number" required>
-            </div>
-            <div class="form-group">
-                <label>Mobile Financial Service Options</label>
-                <select name="mobile-bank" required>
-                    <option value="" disabled selected>Select MFS</option>
-                    <option value="Mobile Bank 1">Nagad</option>
-                    <option value="Mobile Bank 2">Bkash</option>
-                    <option value="Mobile Bank 3">Upay</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>Mobile Financial Service Number:</label><input type="text" name="mobile-bank-number" required>
-            </div>
-            <div class="form-group">
-                <label>Form No:</label><input type="text" name="form-no" required>
-            </div>
-            <div class="form-group">
-                <label>Head of Family Name:</label><input type="text" name="head-of-family-name" required>
-            </div>
-            <div class="form-group">
-                <label>Total Members (Boys):</label><input type="number" name="total-members-boy" required>
-            </div>
-            <div class="form-group">
-                <label>Total Members (Girls):</label><input type="number" name="total-members-girl" required>
-            </div>
-            <div class="form-group">
-                <label>Total Workable Persons:</label><input type="number" name="total-workable-persons" required>
-            </div>
-            <div class="form-group">
-                <label>Total Earnable Persons:</label><input type="number" name="total-earnable-persons" required>
-            </div>
-            <div class="form-group">
-                <label>Source of Income:</label><input type="text" name="source-of-income" required>
-            </div>
-            <div class="form-group">
-                <label for="total-monthly-income">Total Monthly Income</label>
-                <input type="number" class="monthly-income" name="total-monthly-income" required>
-            </div>
-            <div class="form-group">
-                <label for="total-monthly-expense">Total Monthly Expense</label>
-                <input type="number" class="monthly-expense" name="total-monthly-expense" required>
-            </div>
-            <div class="form-group">
-                <label>Loan Amount:</label><input type="number" name="loan-amount" required>
-            </div>
-            <div class="form-group">
-                <label>Monthly Savings Amount:</label><input type="number" name="monthly-savings-amount" required>
-            </div>
-            <div class="form-group">
-                <label>Monthly Installment Amount:</label><input type="number" name="monthly-installment-amount" required>
-            </div>
-            <div class="form-group">
-                <label>Total Unpaid Installment Amount:</label><input type="number" name="total-unpaid-installment-amount" required>
-            </div>
-            <div class="form-group">
-                <label>Have Bangla Translated Quran?</label><input type="checkbox" name="translated-quran">
-            </div>
-            <div class="form-group">
-                <label>Recite Quran Daily?</label><input type="checkbox" name="recite-quran-daily">
-            </div>
-            <div class="form-group">
-                <label for="income-expense-diff">Income-Expense Difference</label>
-                <input type="number" class="income-expense-diff" name="income-expense-diff" readonly>
-            </div>
-            <div class="form-group">
-                <label>Note:</label><textarea name="note"></textarea>
-            </div>
-            <button type="submit" class="btn">Submit</button>
-        </form>
-    </div>
-</div>
+        </div>
 
         <!-- Islamic Employment Modal -->
         <div id="employmentModal" class="modal">
@@ -590,7 +651,7 @@
                     <li><a href="www.socialmicrofinance.org" target="_blank"><i class="fas fa-globe"></i>
                             www.socialmicrofinance.org</a></li>
                     <li><a href="#"><i class="fas fa-map-marker-alt"></i> In front of Water Development Board,
-                              Jhenaidah Sadar, Jhenaidah</a></li>
+                            Jhenaidah Sadar, Jhenaidah</a></li>
                 </ul>
             </div>
         </div>
@@ -601,5 +662,30 @@
 
     <script src="{% static 'js/script.js' %}"></script>
     <script src="{% static 'js/carousel.js' %}"></script>
+    <!-- Script to auto-dismiss success/error messages after 5 seconds -->
+    <!-- <script>
+        setTimeout(function () {
+            let alertElements = document.querySelectorAll('.alert');
+            alertElements.forEach(function (alert) {
+                let closeButton = alert.querySelector('.btn-close');
+                if (!alert.classList.contains('alert-dismissible')) {
+                    alert.style.display = 'none';
+                }
+                setTimeout(() => closeButton.click(), 2000);
+            });
+        }, 2000);
+    </script> -->
+    <script>
+        // Function to hide the alert after 1 second
+        window.onload = function() {
+            const alert = document.querySelector('.alert');
+            if (alert) {
+                setTimeout(function() {
+                    alert.style.display = 'none';
+                }, 2000); // 1 second = 1000 milliseconds
+            }
+        }
+    </script>
 </body>
+
 </html>

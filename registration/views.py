@@ -2,41 +2,34 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from .models import Mosque,HomePageModel,BannerModel
 from .forms import MosqueRegistrationForm, QarrjHasanaAccountForm
-
-# def home(request):
-#     return render(request, 'index.html')
-# def home(request):
-#     home_page = HomePageModel.objects.last()  # Assuming there's only one record
-#     return render(request, 'index.html', {'home_page': home_page})
-
-
-# def banner_view(request):
-#     banners = BannerModel.objects.all().order_by('-id')[:5]  # Get the last 5 images
-#     return render(request, 'index.html', {'banners': banners})
-    
+  
 def home(request):
     home_page = HomePageModel.objects.last()  # Get the last record
     banners = BannerModel.objects.all().order_by('-id')[:5]  # Get the last 5 banners
-    return render(request, 'index.html', {'home_page': home_page, 'banners': banners})
-
-
-def about(request):
-    return render(request, 'about.html')
-
-def mosque_registration(request):
+    # Handle mosque registration form submission
     if request.method == 'POST':
         form = MosqueRegistrationForm(request.POST)
         if form.is_valid():
             form.save()  # Save the new mosque
             messages.success(request, 'Mosque registered successfully!')
-            return redirect('mosque_registration')  # Redirect to the same page
+            return redirect('home')  # Redirect to the same page (home)
         else:
             messages.error(request, 'Failed to register mosque. Please correct the errors.')
+            print(form.errors)
     else:
-        form = MosqueRegistrationForm()
+        form = MosqueRegistrationForm()  # Initialize an empty form if GET request
 
-    context = {'form': form}
-    return render(request, 'mosque/mosque_registration.html', context)
+    # Pass all context data to the template
+    context = {
+        'home_page': home_page,
+        'banners': banners,
+        'form': form,  # Add the mosque registration form to the context
+    }
+
+    return render(request, 'index.html', context)
+
+def about(request):
+    return render(request, 'about.html')
 
 
 

@@ -23,7 +23,7 @@ class BannerModel(models.Model):
     def admin_photo(self):
         if self.banner_image:
             return mark_safe(
-                f'<img src="{self.banner_image.url}" width="100" height="60" '
+                f'<img src="{self.banner_image.url}" width="300" height="170" '
                 f'style="margin-right: 2px; border: 2px solid green;"/>'
             )
         return "No image"
@@ -46,7 +46,7 @@ class Mosque(models.Model):
     mosque_name = models.CharField(max_length=255)  # Required by default
     
     # Address fields
-    village = models.CharField(max_length=255, blank=True, null=True)
+    village = models.CharField(max_length=255)
     district = models.CharField(max_length=255)
     thana = models.CharField(max_length=255)
     division = models.CharField(max_length=255)
@@ -89,38 +89,6 @@ class MobileBank(models.Model):
     def __str__(self):
         return self.name
 
-# Qarrj_Hasana Model
-# class Qarrj_Hasana_Account(models.Model):
-#     mosque = models.ForeignKey(
-#         'Mosque',
-#         on_delete=models.CASCADE,
-#         related_name='qarrj_hasana_entries'
-#     )
-    
-#     name = models.CharField(max_length=255)
-#     phone_number = models.CharField(max_length=15)
-#     email = models.CharField(max_length=15, blank=True, null=True)
-#     address = models.CharField(max_length=255)
-#     nid_no = models.CharField(max_length=20)
-    
-#     bank = models.ForeignKey(
-#         'Bank',
-#         on_delete=models.SET_NULL,
-#         null=True,
-#         blank=True
-#     )
-#     bank_account_number = models.CharField(max_length=50, blank=True, null=True)
-    
-#     mobile_bank = models.ForeignKey(
-#         'MobileBank',
-#         on_delete=models.SET_NULL,
-#         null=True,
-#         blank=True
-#     )
-#     mobile_bank_number = models.CharField(max_length=15, blank=True, null=True)
-    
-#     def __str__(self):
-#         return f"#{self.id}-{self.name} ({self.mosque.mosque_name})"
 
 class Qarrj_Hasana_Account(models.Model):
     mosque = models.ForeignKey(
