@@ -975,7 +975,7 @@ footer {
     padding: 10px;
     color: rgb(251, 251, 251);
     border-radius: 10px;
-    background-color: rgb(33, 193, 33);
+    background-color: #28a745;
 }
 
 .required-field::after {
