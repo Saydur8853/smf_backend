@@ -135,7 +135,7 @@
                 </div>
             </div>
 
-            <button type="submit" class="btn">Register Mosque</button>
+            <button type="submit" class="btn" name="mosque_submit">Register Mosque</button>
         </form>
     </div>
 </div>
@@ -146,7 +146,7 @@
         <div class="alert {% if message.tags %}alert-{{ message.tags }}{% else %}alert-info{% endif %} alert-dismissible fade show"
             role="alert">
             {{ message }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label=""></button>
         </div>
         {% endfor %}
     </div>
@@ -248,73 +248,55 @@
 
                 <!-- Qarj Hasana Registration Form -->
                 <div id="qarj-registration-form" style="display: none;">
-                    <h3>Qaarj Hasana Registration</h3>
-                    <form id="qarjRegisterForm" class="form-layout">
+                    <h3>Qarj Hasana Registration</h3>
+                    <form id="qarjRegisterForm" class="form-layout" method="POST" enctype="multipart/form-data" novalidate>
+                        {% csrf_token %}
+                        <!-- {{ qarj_form.non_field_errors }} -->
+
                         <div class="form-group">
-                            <label for="mosqueName">Mosque Name:</label>
-                            <input type="text" id="mosqueName" required>
+                            <label for="{{ qarj_form.mosque.id_for_label }}">Mosque Name:</label>
+                            {{ qarj_form.mosque }}
                         </div>
 
                         <div class="form-group">
-                            <label for="userName">Name:</label>
-                            <input type="text" id="userName" required>
+                            <label for="{{ qarj_form.photo.id_for_label }}">Photo:</label>
+                            {{ qarj_form.photo }}
                         </div>
 
                         <div class="form-group">
-                            <label for="phone">Phone:</label>
-                            <input type="tel" id="phone" required>
+                            <label for="{{ qarj_form.name.id_for_label }}">Name:</label>
+                            {{ qarj_form.name }}
                         </div>
 
                         <div class="form-group">
-                            <label for="address">Address:</label>
-                            <input type="text" id="address" required>
+                            <label for="{{ qarj_form.phone_number.id_for_label }}">Phone:</label>
+                            {{ qarj_form.phone_number }}
                         </div>
 
                         <div class="form-group">
-                            <label for="nid">NID Number:</label>
-                            <input type="text" id="nid" required>
+                            <label for="{{ qarj_form.email.id_for_label }}">Email (Optional):</label>
+                            {{ qarj_form.email }}
                         </div>
 
                         <div class="form-group">
-                            <label for="password">Password:</label>
-                            <input type="password" id="password" required>
+                            <label for="{{ qarj_form.address.id_for_label }}">Address:</label>
+                            {{ qarj_form.address }}
                         </div>
 
                         <div class="form-group">
-                            <label for="bankingOption">Banking Option:</label>
-                            <select id="bankingOption" required>
-                                <option value="">Select</option>
-                                <option value="bank1">Bank 1</option>
-                                <option value="bank2">Bank 2</option>
-                                <option value="bank3">Bank 3</option>
-                                <option value="bank4">Bank 4</option>
-                                <option value="bank5">Bank 5</option>
-                            </select>
+                            <label for="{{ qarj_form.nid_no.id_for_label }}">NID Number:</label>
+                            {{ qarj_form.nid_no }}
                         </div>
 
                         <div class="form-group">
-                            <label for="bankAccountNumber">Bank Account Number:</label>
-                            <input type="text" id="bankAccountNumber" required>
+                            <label for="{{ qarj_form.password.id_for_label }}">Password:</label>
+                            {{ qarj_form.password }}
                         </div>
 
-                        <div class="form-group">
-                            <label for="mobileBankingOption">Mobile Financial Service Option:</label>
-                            <select id="mobileBankingOption" required>
-                                <option value="">Select</option>
-                                <option value="mbank1">Nagad</option>
-                                <option value="mbank2">Bkash</option>
-                                <option value="mbank3">Upay</option>
-                            </select>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="mobileBankNumber">Mobile Financial Service Number:</label>
-                            <input type="text" id="mobileBankNumber" required>
-                        </div>
-
-                        <button type="submit" class="btn">Register</button>
+                        <button type="submit" class="btn" name="qarj_submit">Register</button>
                     </form>
                 </div>
+
                 <!-- Qarj Hasana Application Form -->
                 <div id="qarj-application-form" style="display: none;">
                     <h3>Apply for Qaarj Hasana</h3>
@@ -662,19 +644,6 @@
 
     <script src="{% static 'js/script.js' %}"></script>
     <script src="{% static 'js/carousel.js' %}"></script>
-    <!-- Script to auto-dismiss success/error messages after 5 seconds -->
-    <!-- <script>
-        setTimeout(function () {
-            let alertElements = document.querySelectorAll('.alert');
-            alertElements.forEach(function (alert) {
-                let closeButton = alert.querySelector('.btn-close');
-                if (!alert.classList.contains('alert-dismissible')) {
-                    alert.style.display = 'none';
-                }
-                setTimeout(() => closeButton.click(), 2000);
-            });
-        }, 2000);
-    </script> -->
     <script>
         // Function to hide the alert after 1 second
         window.onload = function() {

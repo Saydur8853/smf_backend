@@ -96,14 +96,44 @@ class Qarrj_Hasana_Account(models.Model):
         on_delete=models.CASCADE,
         related_name='qarrj_hasana_entries'
     )
-    
+    photo = models.ImageField(upload_to='q_hasana_profile/', blank=True, null=True)
     name = models.CharField(max_length=255)
     phone_number = models.CharField(max_length=15)
-    email = models.CharField(max_length=15, blank=True, null=True)
+    email = models.CharField(max_length=80, blank=True, null=True)
     address = models.CharField(max_length=255)
     nid_no = models.CharField(max_length=30, unique=True)  # Unique constraint added
     password = models.CharField(max_length=128)
+
+    def __str__(self):
+        return f"#{self.id}-{self.name} ({self.mosque.mosque_name})"
     
+    def save(self, *args, **kwargs):
+        self.password = make_password(self.password)
+        super(Qarrj_Hasana_Account, self).save(*args, **kwargs)
+
+    # def admin_photo(self):
+    #     return mark_safe('<img src="{}" width="50" />'.format(self.photo.url))
+    # admin_photo.short_description = 'photo'
+    # admin_photo.allow_tags= True
+
+    def admin_photo(self):
+        if self.photo:
+            return mark_safe(
+                f'<img src="{self.photo.url}" width="50" height="50" '
+            )
+        return "No image"
+
+    admin_photo.short_description = 'Image'
+
+
+
+class Qarrj_Hasana_Apply(models.Model):
+    qarrj_hasana = models.ForeignKey(
+        Qarrj_Hasana_Account,
+        on_delete=models.CASCADE,
+        related_name='applications'
+    )
+    requested_amount_for_qarrj_hasana = models.PositiveBigIntegerField(default=0)
     bank = models.ForeignKey(
         'Bank',
         on_delete=models.SET_NULL,
@@ -120,24 +150,6 @@ class Qarrj_Hasana_Account(models.Model):
     )
     mobile_bank_number = models.CharField(max_length=15, blank=True, null=True)
 
-    
-
-    def __str__(self):
-        return f"#{self.id}-{self.name} ({self.mosque.mosque_name})"
-    
-    def save(self, *args, **kwargs):
-        self.password = make_password(self.password)
-        super(Qarrj_Hasana_Account, self).save(*args, **kwargs)
-
-
-
-class Qarrj_Hasana_Apply(models.Model):
-    qarrj_hasana = models.ForeignKey(
-        Qarrj_Hasana_Account,
-        on_delete=models.CASCADE,
-        related_name='applications'
-    )
-    requested_amount_for_qarrj_hasana = models.PositiveBigIntegerField(default=0)
     
     form_no = form_no = models.AutoField(primary_key=True)
     

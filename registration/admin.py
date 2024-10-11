@@ -35,9 +35,9 @@ admin.site.register(MobileBank)
 
 @admin.register(Qarrj_Hasana_Account)
 class QarrjHasanaAccountAdmin(admin.ModelAdmin):
-    list_display = ('id','name', 'mosque', 'phone_number', 'nid_no', 'bank', 'mobile_bank')
+    list_display = ('id','admin_photo','name', 'mosque', 'phone_number', 'nid_no')
     search_fields = ('name', 'phone_number', 'nid_no')
-    list_filter = ('mosque__district', 'bank', 'mobile_bank')
+    list_filter = ('mosque','mosque__district',)
     raw_mosque_name_fields = ('mosque',)
     
 

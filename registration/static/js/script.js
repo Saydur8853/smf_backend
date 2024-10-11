@@ -91,13 +91,13 @@ document.getElementById('showQarjRegister').addEventListener('click', function (
 });
 
 // Handle registration form submission
-document.getElementById('qarjRegisterForm').addEventListener('submit', function (e) {
-    e.preventDefault();
-    alert('Registered successfully! Redirecting to login...');
-    // After registration, redirect to login form
-    document.getElementById('qarj-registration-form').style.display = 'none';
-    document.getElementById('qarjLoginForm').style.display = 'block';
-});
+// document.getElementById('qarjRegisterForm').addEventListener('submit', function (e) {
+//     e.preventDefault();
+//     alert('Registered successfully! Redirecting to login test...');
+//     // After registration, redirect to login form
+//     document.getElementById('qarj-registration-form').style.display = 'none';
+//     document.getElementById('qarjLoginForm').style.display = 'block';
+// });
 
 // Handle login form submission
 document.getElementById('qarjLoginForm').addEventListener('submit', function (e) {
