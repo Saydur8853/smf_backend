@@ -63,62 +63,6 @@ def home(request):
 
     return render(request, 'index.html', context)
 
-# # Dashboard view
-# def dashboard(request):
-#     # Check if the user is logged in
-#     logged_in_user = request.session.get('logged_in_user')
-#     logged_in_nid = request.session.get('logged_in_nid')
-
-#     if not logged_in_nid:
-#         return redirect('home')  # Redirect to the home page if not logged in
-
-#     # Retrieve the logged-in user's account using `nid_no`
-#     account = Qarrj_Hasana_Account.objects.get(nid_no=logged_in_nid)
-
-#     # Retrieve the most recent application for the user
-#     recent_application = Qarrj_Hasana_Apply.objects.filter(qarrj_hasana=account).order_by('-applied_on').first()
-#     has_pending_application = recent_application and recent_application.status == 'pending'
-
-#     # Initialize the status variable
-#     status = ""
-
-#     if has_pending_application:
-#         status = f"Your application status is: {recent_application.get_status_display()}"
-#     elif recent_application:
-#         status = f"Your application status is: {recent_application.get_status_display()}"
-#     else:
-#         status = "No applications found."
-
-#     # Handle Qarj Hasana Apply form submission
-#     if request.method == 'POST' and 'qarj_apply_submit' in request.POST:
-#         if has_pending_application:
-#             messages.error(request, 'You cannot apply again while you have a pending application.')
-#             return redirect('dashboard')  # Redirect to refresh the dashboard
-        
-#         qarj_apply_form = QarrjHasanaApplyForm(request.POST)
-#         if qarj_apply_form.is_valid():
-#             qarj_apply_instance = qarj_apply_form.save(commit=False)
-#             qarj_apply_instance.qarrj_hasana = account  # Link the application to the logged-in user's account
-#             qarj_apply_instance.save()
-#             messages.success(request, 'Qarj Hasana Application submitted successfully!')
-#             return redirect('dashboard')  # Redirect to refresh the dashboard
-#         else:
-#             messages.error(request, 'Failed to submit the application. Please correct the errors.')
-#     else:
-#         qarj_apply_form = QarrjHasanaApplyForm()  # Initialize an empty form
-
-#     context = {
-#         'logged_in_user': account.name,  # Pass the logged-in user's name to the dashboard
-#         'user_photo': account.photo.url if account.photo else None,  # Pass the user's photo URL or None if not available
-#         'associate_mosque': account.mosque,
-#         'phone_number': account.phone_number,
-#         'nid': account.nid_no,
-#         'qarj_apply_form': qarj_apply_form,
-#         'has_pending_application': has_pending_application,
-#         'status': status,  # Now the status is defined
-#     }
-
-#     return render(request, 'dashboard.html', context)
 def dashboard(request):
     # Check if the user is logged in
     logged_in_user = request.session.get('logged_in_user')
