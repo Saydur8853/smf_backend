@@ -1,8 +1,21 @@
 from django.db import models
 from decimal import Decimal
 from django.contrib.auth.hashers import make_password
-
 from django.utils.safestring import mark_safe
+from django.utils import timezone
+
+class AdminInformation(models.Model):
+    phone_number_primary = models.CharField(max_length=20)
+    phone_number_secondery = models.CharField(max_length=15, blank=True, null=True)
+    email_address = models.EmailField(max_length=254, blank=True, null=True)
+    facebook_link = models.URLField(max_length=200, blank=True, null=True)
+    linkedin_link = models.URLField(max_length=200, blank=True, null=True)
+    youtube_link = models.URLField(max_length=200, blank=True, null=True)
+    website_link = models.URLField(max_length=200, blank=True, null=True)
+    address = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return f"Admin Info: {self.phone_number_primary} - {self.phone_number_secondery} - {self.email_address}"
 
 class HomePageModel(models.Model):
     smf_logo = models.ImageField(upload_to='logos/', blank=True, null=True)
@@ -111,11 +124,6 @@ class Qarrj_Hasana_Account(models.Model):
         self.password = make_password(self.password)
         super(Qarrj_Hasana_Account, self).save(*args, **kwargs)
 
-    # def admin_photo(self):
-    #     return mark_safe('<img src="{}" width="50" />'.format(self.photo.url))
-    # admin_photo.short_description = 'photo'
-    # admin_photo.allow_tags= True
-
     def admin_photo(self):
         if self.photo:
             return mark_safe(
@@ -128,12 +136,18 @@ class Qarrj_Hasana_Account(models.Model):
 
 
 class Qarrj_Hasana_Apply(models.Model):
+    STATUS_CHOICES = [
+        ('pending', 'Pending'),
+        ('approved', 'Approved'),
+        ('rejected', 'Rejected'),
+        ('close', 'close'),
+    ]
     qarrj_hasana = models.ForeignKey(
         Qarrj_Hasana_Account,
         on_delete=models.CASCADE,
         related_name='applications'
     )
-    requested_amount_for_qarrj_hasana = models.PositiveBigIntegerField(default=0)
+    requested_amount_for_qarrj_hasana = models.PositiveBigIntegerField()
     bank = models.ForeignKey(
         'Bank',
         on_delete=models.SET_NULL,
@@ -154,15 +168,15 @@ class Qarrj_Hasana_Apply(models.Model):
     form_no = form_no = models.AutoField(primary_key=True)
     
     head_of_family_name = models.CharField(max_length=255)
-    total_members_boy = models.PositiveIntegerField(default=0)
-    total_members_girl = models.PositiveIntegerField(default=0)
-    total_workable_persons = models.PositiveIntegerField(default=0)
-    total_earnable_persons = models.PositiveIntegerField(default=0)
+    total_members_boy = models.PositiveIntegerField()
+    total_members_girl = models.PositiveIntegerField()
+    total_workable_persons = models.PositiveIntegerField()
+    total_earnable_persons = models.PositiveIntegerField()
     
     source_of_income = models.CharField(max_length=255)
     
-    total_monthly_income = models.PositiveIntegerField(default=0)
-    total_monthly_expense = models.PositiveIntegerField(default=0)
+    total_monthly_income = models.PositiveIntegerField()
+    total_monthly_expense = models.PositiveIntegerField()
 
     loan_amount = models.DecimalField(max_digits=15, decimal_places=0)
     monthly_savings_amount = models.DecimalField(max_digits=15, decimal_places=0)
@@ -172,15 +186,18 @@ class Qarrj_Hasana_Apply(models.Model):
     have_bangla_translated_if_quran = models.BooleanField(default=False)
     recite_quran_daily = models.BooleanField(default=False)
     
-    income_expense_diff_amount = models.DecimalField(max_digits=15, decimal_places=0, editable=False, default=0.00)
-    
+    income_expense_diff_amount = models.DecimalField(max_digits=15, decimal_places=0, editable=False,)
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')  # Default to 'Pending'
+    applied_on = models.DateTimeField(auto_now_add=True)
+    transaction_screenshot = models.ImageField(upload_to='transaction_screenshots/', blank=True, null=True)
+
     def save(self, *args, **kwargs):
         # Calculate the income-expense difference before saving
         self.income_expense_diff_amount = self.total_monthly_income - self.total_monthly_expense
         super().save(*args, **kwargs)
     
     def __str__(self):
-        return f"Application {self.form_no} - {self.qarrj_hasana.name}"
+        return f"Application for {self.requested_amount_for_qarrj_hasana} - {self.status}- {self.applied_on}"
     
 
 

@@ -100,13 +100,13 @@ document.getElementById('showQarjRegister').addEventListener('click', function (
 // });
 
 // Handle login form submission
-document.getElementById('qarjLoginForm').addEventListener('submit', function (e) {
-    e.preventDefault();
-    alert('Logged in successfully! Redirecting to apply form...');
-    // After login, show the apply form
-    document.getElementById('qarjLoginForm').style.display = 'none';
-    document.getElementById('qarj-application-form').style.display = 'block';
-});
+// document.getElementById('qarjLoginForm').addEventListener('submit', function (e) {
+//     e.preventDefault();
+//     alert('Logged in successfully! Redirecting to apply form...');
+//     // After login, show the apply form
+//     document.getElementById('qarjLoginForm').style.display = 'none';
+//     document.getElementById('qarj-application-form').style.display = 'block';
+// });
 // Show Forgot Password Form
 document.getElementById('forgotPasswordLink').addEventListener('click', function (e) {
     e.preventDefault();

@@ -1,9 +1,30 @@
 from django.contrib import admin
 from decimal import Decimal
-from .models import HomePageModel,BannerModel,Global_Settings, Mosque,Bank, MobileBank, Qarrj_Hasana_Account,Qarrj_Hasana_Apply, Zakat_Wallet, Zakat_Provider,Zakat_Receiver, Personal_Zakat_Wallet
+from .models import AdminInformation,HomePageModel,BannerModel,Global_Settings, Mosque,Bank, MobileBank, Qarrj_Hasana_Account,Qarrj_Hasana_Apply, Zakat_Wallet, Zakat_Provider,Zakat_Receiver, Personal_Zakat_Wallet
 from django.contrib import admin
+from django.shortcuts import redirect
+from django.contrib import messages
 
+class AdminInformationAdmin(admin.ModelAdmin):
+    list_display = ('phone_number_primary', 'phone_number_secondery', 'email_address', 'website_link')
+    search_fields = ('email_address', 'phone_number_primary', 'phone_number_secondery')
+    list_filter = ('website_link',)
 
+    fieldsets = (
+        (None, {
+            'fields': ('phone_number_primary', 'phone_number_secondery', 'email_address')
+        }),
+        ('Links', {
+            'fields': ('facebook_link', 'linkedin_link', 'youtube_link', 'website_link')
+        }),
+        ('Address', {
+            'fields': ('address',)
+        }),
+    )
+
+    ordering = ('email_address',)
+
+admin.site.register(AdminInformation, AdminInformationAdmin)
 
 @admin.register(HomePageModel)
 class HomePageModelAdmin(admin.ModelAdmin):
@@ -46,19 +67,17 @@ class QarrjHasanaAccountAdmin(admin.ModelAdmin):
 @admin.register(Qarrj_Hasana_Apply)
 class QarrjHasanaApplyAdmin(admin.ModelAdmin):
     list_display = (
-        'form_no', 'qarrj_hasana', 'head_of_family_name', 'total_members_boy', 
-        'total_members_girl', 'total_workable_persons', 'total_earnable_persons',
-        'source_of_income', 'total_monthly_income', 'total_monthly_expense',
-        'loan_amount', 'monthly_savings_amount', 'monthly_installment_amount',
-        'total_unpaid_installment_amount', 'have_bangla_translated_if_quran',
-        'recite_quran_daily', 'income_expense_diff_amount'
+        'form_no','qarrj_hasana','requested_amount_for_qarrj_hasana',
+        'total_monthly_income', 'total_monthly_expense','loan_amount',
+        'total_unpaid_installment_amount','income_expense_diff_amount', 'bank_account_number','mobile_bank_number',
+        'status', 'applied_on'  # Added fields
     )
+    
     search_fields = (
-        'form_no', 'head_of_family_name', 'source_of_income', 'loan_amount',
-        'monthly_savings_amount', 'monthly_installment_amount', 'total_unpaid_installment_amount'
+        'form_no', 'requested_amount_for_qarrj_hasana','bank_account_number', 'mobile_bank_number', 
     )
     list_filter = (
-        'qarrj_hasana__mosque', 'have_bangla_translated_if_quran', 'recite_quran_daily'
+        'qarrj_hasana__mosque', 'have_bangla_translated_if_quran', 'recite_quran_daily', 'status'  # Optionally add 'status' to filters
     )
     # readonly_fields = ('income_expense_diff_amount',)  # Make the calculated field read-only
     exclude = ('income_expense_diff_amount',)
@@ -66,10 +85,15 @@ class QarrjHasanaApplyAdmin(admin.ModelAdmin):
     def get_readonly_fields(self, request, obj=None):
         # Optionally, make income_expense_diff_amount read-only only when editing
         if obj:
-            return self.readonly_fields + ('form_no',)  # Add form_no to readonly fields if needed
+            return self.readonly_fields + ('form_no','income_expense_diff_amount',)  # Add form_no to readonly fields if needed
         return self.readonly_fields
     
-
+def approve_qarj_application(request, application_id):
+    application = Qarrj_Hasana_Apply.objects.get(id=application_id)
+    application.status = 'approved'
+    application.save()
+    messages.success(request, 'Application approved successfully.')
+    return redirect('admin_dashboard')  # Or wherever you want to redirect
 
 @admin.register(Zakat_Wallet)
 class ZakatWalletAdmin(admin.ModelAdmin):

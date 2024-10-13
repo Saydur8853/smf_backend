@@ -210,40 +210,32 @@
         <!-- Qarj Hasana Login Modal -->
         <div id="qarjModal" class="modal">
             <div class="modal-content">
-                <span class="close">&times;</span>
+                <span class="close" onclick="redirectToHome()">&times;</span>
                 <div id="qarjLoginForm">
                     <h3>Qaarj Hasana Login</h3>
-                    <form id="loginForm">
+                    <form id="loginForm" method="POST" action="{% url 'home' %}">
+                        {% csrf_token %}
                         <div class="form-group">
                             <label for="loginNID">User NID:</label>
-                            <input type="text" id="loginNID" required>
+                            <input type="text" id="loginNID" name="nid_no" autocomplete="off" required>
                         </div>
-
+        
                         <div class="form-group">
                             <label for="loginPassword">Password:</label>
-                            <input type="password" id="loginPassword" required>
+                            <input type="password" id="loginPassword" name="password" autocomplete="off" required>
                         </div>
                         <div class="login-options">
                             <p class="forgot-password"><a href="#" id="forgotPasswordLink">Forgot Password?</a></p>
-                            <button type="submit" id="login-btn" class="btn">Log In</button>
+                            <button type="submit" name="login_submit" id="login-btn" class="btn">Log In</button>
                         </div>
-                        <p class="register-link">Don't have an account? <a href="#" id="showQarjRegister">Register
-                                here</a></p>
+                        <p class="register-link">Don't have an account? <a href="#" id="showQarjRegister">Register here</a></p>
                     </form>
 
                 </div>
                 <!-- Forgot Password Form -->
                 <div id="forgot-password-form" style="display: none;">
-                    <h3>Forgot Password</h3>
-                    <form id="forgotPasswordForm">
-                        <label for="resetNID">Enter your NID:</label>
-                        <input type="text" id="resetNID" placeholder="Enter your NID to reset password" required>
-
-                        <button type="submit" class="btn">Reset Password</button>
-                        <p>
-                            <a href="#" id="backToLogin"></a>
-                        </p>
-                    </form>
+                    <h3>Please contact with admin</h3>
+                    <h4 id="contact-number">Contact number: {{ admin_info.phone_number_primary }}</h4>
                 </div>
 
                 <!-- Qarj Hasana Registration Form -->
@@ -655,6 +647,17 @@
             }
         }
     </script>
+    <script>
+        function toggleForgotPassword() {
+            const form = document.getElementById("forgot-password-form");
+            form.style.display = (form.style.display === "none" || form.style.display === "") ? "block" : "none";
+        }
+    
+        function redirectToHome() {
+            window.location.href = '/';  // Change this to your home page URL if different
+        }
+    </script>
+    
 </body>
 
 </html>

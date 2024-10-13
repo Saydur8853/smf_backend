@@ -1,5 +1,5 @@
 from django import forms
-from .models import Mosque,Qarrj_Hasana_Account
+from .models import Mosque,Qarrj_Hasana_Account,Qarrj_Hasana_Apply
 
 class MosqueRegistrationForm(forms.ModelForm):
     class Meta:
@@ -24,3 +24,36 @@ class QarrjHasanaAccountForm(forms.ModelForm):
         widgets = {
             'password': forms.PasswordInput(),
         }
+
+class QarjLoginForm(forms.Form):
+    nid_no = forms.CharField(max_length=30, label='NID Number')
+    password = forms.CharField(widget=forms.PasswordInput(), label='Password')
+
+
+
+# qarrj hasana apply form
+
+class QarrjHasanaApplyForm(forms.ModelForm):
+    class Meta:
+        model = Qarrj_Hasana_Apply
+        fields = [
+            'requested_amount_for_qarrj_hasana',
+            'bank',
+            'bank_account_number',
+            'mobile_bank',
+            'mobile_bank_number',
+            'head_of_family_name',
+            'total_members_boy',
+            'total_members_girl',
+            'total_workable_persons',
+            'total_earnable_persons',
+            'source_of_income',
+            'total_monthly_income',
+            'total_monthly_expense',
+            'loan_amount',
+            'monthly_savings_amount',
+            'monthly_installment_amount',
+            'total_unpaid_installment_amount',
+            'have_bangla_translated_if_quran',
+            'recite_quran_daily'
+        ]

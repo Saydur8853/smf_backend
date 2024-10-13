@@ -1,0 +1,281 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+    <title>Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            height: 100vh; /* Set body height to 100% of the viewport height */
+            display: flex; /* Use flexbox for centering */
+            align-items: center; /* Vertically center */
+            justify-content: center; /* Horizontally center */
+        }
+
+        .container {
+            display: flex;
+            justify-content: space-between;
+            padding: 20px;
+            width: 100%; /* Full width for responsiveness */
+            max-width: 1200px; /* Maximum width */
+            margin: 0 auto; /* Center container */
+            background-color: #fff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            position: relative; /* Set position to relative for absolute children */
+        }
+
+        .left-section, .right-section {
+            width: 48%;
+        }
+
+        h1, h3, h4 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        p {
+            color: #555;
+        }
+
+        .btn_apply, .logout-btn {
+            position: absolute; /* Absolute positioning */
+            top: 20px; /* Distance from the top */
+            background-color: #17153b;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn_apply {
+            right: 100px; /* Distance from the right for Apply button */
+        }
+
+        .logout-btn {
+            right: 20px; /* Distance from the right for Logout button */
+            background-color: #007bff;
+        }
+
+        .logout-btn:hover {
+            background-color: #0056b3;
+        }
+
+        .status-section {
+            margin-top: 20px;
+            padding: 10px;
+            color: white;
+            border-radius: 5px;
+            background-color: #eae1e1;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: #fff;
+            margin: 2% auto;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            width: 80%;
+            max-width: 600px;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .alert-container {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: auto;
+            z-index: 1001;
+        }
+
+        .alert {
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .alert-error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        .glow-on-hover {
+            width: 150px;
+            height: 50px;
+            border: none;
+            outline: none;
+            color: #fff;
+            background: #17153B;
+            cursor: pointer;
+            position: relative;
+            z-index: 0;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            margin-left: 100px;
+        }
+
+        .glow-on-hover:before {
+            content: '';
+            background: linear-gradient(45deg, #ff0000, #ff7300, #fffb00, #48ff00, #00ffd5, #002bff, #7a00ff, #ff00c8, #ff0000);
+            position: absolute;
+            top: -2px;
+            left:-2px;
+            background-size: 400%;
+            z-index: -1;
+            filter: blur(5px);
+            width: calc(100% + 4px);
+            height: calc(100% + 4px);
+            animation: glowing 20s linear infinite;
+            opacity: 1; /* Make it always visible */
+            border-radius: 10px;
+        }
+
+        .glow-on-hover:active {
+            color: #000;
+        }
+
+        .glow-on-hover:active:after {
+            background: transparent;
+        }
+
+        .glow-on-hover:after {
+            z-index: -1;
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: #17153B;
+            left: 0;
+            top: 0;
+            border-radius: 10px;
+        }
+
+        @keyframes glowing {
+            0% { background-position: 0 0; }
+            50% { background-position: 400% 0; }
+            100% { background-position: 0 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="left-section">
+            <h1>Welcome, {{ logged_in_user }}!</h1>
+            {% if user_photo %}
+                <img src="{{ user_photo }}" alt="User Photo" style="width: 200px; height: 200px; object-fit: cover; float: right; margin-left: 50px; border-radius: 10px;">
+            {% else %}
+                <p>No photo available</p>
+            {% endif %}
+            <h3>{{ associate_mosque }}</h3>
+            <h4>Phone no: {{ phone_number }}</h4>
+            <h4>NID no: {{ nid }}</h4>
+        </div>
+
+        <button type="submit" class="logout-btn" form="logoutForm">Logout</button>
+        
+        <form method="POST" action="{% url 'logout' %}" id="logoutForm" style="display: none;">
+            {% csrf_token %}
+        </form>
+
+        <div class="right-section">
+            <button class="btn_apply glow-on-hover" id="applyBtn">Apply for Qarrj</button>
+            <div class="status-section">
+                <h3>Status</h3>
+                <p>{{ status }}</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Qarj Hasana Application Form Modal -->
+    <div id="qarj-application-form" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h3>Apply for Qaarj Hasana</h3>
+            <form method="POST">
+                {% csrf_token %}
+                {{ qarj_apply_form.as_p }}  <!-- Render the form fields dynamically -->
+                <button type="submit" name="qarj_apply_submit">Apply for Qarj Hasana</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Alert Section -->
+    {% if messages %}
+        <div class="alert-container">
+            {% for message in messages %}
+                <div class="alert {% if message.tags %}alert-{{ message.tags }}{% else %}alert-info{% endif %} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label=""></button>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <script>
+        // Modal functionality
+        const modal = document.getElementById("qarj-application-form");
+        const btn = document.getElementById("applyBtn");
+        const span = document.getElementsByClassName("close")[0];
+
+        btn.onclick = function() {
+            modal.style.display = "block";
+        }
+
+        span.onclick = function() {
+            modal.style.display = "none";
+        }
+
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+
+        // Alert auto-dismiss functionality
+        const alertContainers = document.querySelectorAll('.alert-container .alert');
+        alertContainers.forEach((alert) => {
+            setTimeout(() => {
+                alert.style.display = 'none'; // Hide the alert after 2 seconds
+            }, 2000); // 2000 milliseconds = 2 seconds
+        });
+    </script>
+</body>
+</html>
