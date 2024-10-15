@@ -1,5 +1,5 @@
 from django import forms
-from .models import Mosque,Qarrj_Hasana_Account,Qarrj_Hasana_Apply
+from .models import Mosque,Qarrj_Hasana_Account,Qarrj_Hasana_Apply,Zakat_Provider
 
 class MosqueRegistrationForm(forms.ModelForm):
     class Meta:
@@ -57,3 +57,9 @@ class QarrjHasanaApplyForm(forms.ModelForm):
             'have_bangla_translated_if_quran',
             'recite_quran_daily'
         ]
+
+
+class ZakatProviderForm(forms.ModelForm):
+    class Meta:
+        model = Zakat_Provider
+        fields = ['mosque', 'name', 'contact_number', 'address', 'donation_amount', 'transaction_screenshot']

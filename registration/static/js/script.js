@@ -115,19 +115,19 @@ document.getElementById('forgotPasswordLink').addEventListener('click', function
 });
 
 // Handle Forgot Password Form Submission
-document.getElementById('forgotPasswordForm').addEventListener('submit', function (e) {
-    e.preventDefault();
-    alert('Password reset instructions sent. Please check your email.');
-    document.getElementById('forgot-password-form').style.display = 'none';
-    document.getElementById('qarjLoginForm').style.display = 'block';
-});
+// document.getElementById('forgotPasswordForm').addEventListener('submit', function (e) {
+//     e.preventDefault();
+//     alert('Password reset instructions sent. Please check your email.');
+//     document.getElementById('forgot-password-form').style.display = 'none';
+//     document.getElementById('qarjLoginForm').style.display = 'block';
+// });
 
 // Back to Login from Forgot Password Form
-document.getElementById('backToLogin').addEventListener('click', function (e) {
-    e.preventDefault();
-    document.getElementById('forgot-password-form').style.display = 'none';
-    document.getElementById('qarjLoginForm').style.display = 'block';
-});
+// document.getElementById('backToLogin').addEventListener('click', function (e) {
+//     e.preventDefault();
+//     document.getElementById('forgot-password-form').style.display = 'none';
+//     document.getElementById('qarjLoginForm').style.display = 'block';
+// });
 
 // Handle apply form submission
 document.getElementById('qarjApplyForm').addEventListener('submit', function (e) {
@@ -176,12 +176,14 @@ closeZakatModal.onclick = function() {
 zakatProviderBtn.onclick = function() {
     zakatModal.style.display = 'none';
     zakatProviderModal.style.display = 'block';
+    console.log("Zakat Provider Modal Opened");
 };
 
 // Zakat receiver modal
 zakatReceiverBtn.onclick = function() {
     zakatModal.style.display = 'none';
     zakatReceiverModal.style.display = 'block';
+    console.log("Zakat Provider Modal Opened");
 };
 
 // Close zakat provider modal
@@ -204,26 +206,26 @@ window.onclick = function(event) {
         zakatReceiverModal.style.display = 'none';
     }
 };
-// Function to calculate and update income-expense difference for all forms with the same class
-function calculateIncomeExpenseDifference() {
-    const incomeFields = document.querySelectorAll('.monthly-income');
-    const expenseFields = document.querySelectorAll('.monthly-expense');
-    const differenceFields = document.querySelectorAll('.income-expense-diff');
+// // Function to calculate and update income-expense difference for all forms with the same class
+// function calculateIncomeExpenseDifference() {
+//     const incomeFields = document.querySelectorAll('.monthly-income');
+//     const expenseFields = document.querySelectorAll('.monthly-expense');
+//     const differenceFields = document.querySelectorAll('.income-expense-diff');
 
-    incomeFields.forEach((incomeField, index) => {
-        const expenseField = expenseFields[index];
-        const differenceField = differenceFields[index];
+//     incomeFields.forEach((incomeField, index) => {
+//         const expenseField = expenseFields[index];
+//         const differenceField = differenceFields[index];
 
-        function updateDifference() {
-            const incomeValue = parseFloat(incomeField.value) || 0;
-            const expenseValue = parseFloat(expenseField.value) || 0;
-            differenceField.value = incomeValue - expenseValue;
-        }
+//         function updateDifference() {
+//             const incomeValue = parseFloat(incomeField.value) || 0;
+//             const expenseValue = parseFloat(expenseField.value) || 0;
+//             differenceField.value = incomeValue - expenseValue;
+//         }
 
-        incomeField.addEventListener('input', updateDifference);
-        expenseField.addEventListener('input', updateDifference);
-    });
-}
+//         incomeField.addEventListener('input', updateDifference);
+//         expenseField.addEventListener('input', updateDifference);
+//     });
+// }
 
 // Initialize the calculation for both forms
-calculateIncomeExpenseDifference();
+// calculateIncomeExpenseDifference();

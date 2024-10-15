@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.hashers import check_password
 from .models import Mosque,HomePageModel,BannerModel,Qarrj_Hasana_Account,Qarrj_Hasana_Apply,AdminInformation
-from .forms import MosqueRegistrationForm, QarrjHasanaAccountForm, QarrjHasanaApplyForm
+from .forms import MosqueRegistrationForm, QarrjHasanaAccountForm, QarrjHasanaApplyForm,ZakatProviderForm
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
 
@@ -30,6 +30,17 @@ def home(request):
     if qarj_form.is_valid():
         qarj_form.save()
         return redirect('home')  # Adjust as per your flow
+    
+    # Handle Zakat Provider form submission
+    zakat_form = ZakatProviderForm(request.POST, request.FILES) if request.method == 'POST' and 'zakat_submit' in request.POST else ZakatProviderForm()
+
+    if zakat_form.is_valid():
+        zakat_form.save()
+        messages.success(request, 'Zakat Provider data submitted successfully!')
+        return redirect('home')
+    elif request.method == 'POST' and 'zakat_submit' in request.POST:
+        messages.error(request, 'Failed to submit Zakat Provider data. Please correct the errors.')
+
 
     # Handle Qarj Hasana login
     if request.method == 'POST' and 'login_submit' in request.POST:
@@ -58,6 +69,7 @@ def home(request):
         'banners': banners,
         'form': form,  # Mosque registration form
         'qarj_form': qarj_form,  # Qarj Hasana registration form
+        'zakat_form': zakat_form,  # Zakat Provider form
         'admin_info': admin_info,
     }
 

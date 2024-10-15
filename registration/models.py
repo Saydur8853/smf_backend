@@ -189,7 +189,7 @@ class Qarrj_Hasana_Apply(models.Model):
     income_expense_diff_amount = models.DecimalField(max_digits=15, decimal_places=0, editable=False,)
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')  # Default to 'Pending'
     applied_on = models.DateTimeField(auto_now_add=True)
-    transaction_screenshot = models.ImageField(upload_to='transaction_screenshots/', blank=True, null=True)
+    transaction_screenshot = models.ImageField(upload_to='qarrj_transaction_screenshots/', blank=True, null=True)
 
     def save(self, *args, **kwargs):
         # Calculate the income-expense difference before saving
@@ -238,7 +238,9 @@ class Zakat_Provider(models.Model):
     contact_number = models.CharField(max_length=15)
     address = models.CharField(max_length=255)
     donation_amount = models.DecimalField(max_digits=15, decimal_places=2, null=True, blank=True)
+    transaction_screenshot = models.ImageField(upload_to='zakat_provider_trs_ss/', blank=True, null=True)
     donation_date = models.DateField(auto_now_add=True)
+   
     
     def __str__(self):
         return f"{self.name} - Donation: {self.donation_amount or 'No Donation'}"
