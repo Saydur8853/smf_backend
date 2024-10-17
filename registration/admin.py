@@ -1,7 +1,6 @@
 from django.contrib import admin
 from decimal import Decimal
-from .models import AdminInformation,HomePageModel,BannerModel,Global_Settings, Mosque,Bank, MobileBank,BankInfo, Qarrj_Hasana_Account,Qarrj_Hasana_Apply, Zakat_Wallet, Zakat_Provider,Zakat_Receiver, Personal_Zakat_Wallet
-from django.contrib import admin
+from .models import AdminInformation,HomePageModel,BannerModel,Global_Settings, Mosque,Bank, MobileBank,BankInfo, Qarrj_Hasana_Account,Qarrj_Hasana_Apply, Zakat_Provider,Zakat_Receiver,ImageCardBlog,EmployeeInfo
 from django.shortcuts import redirect
 from django.contrib import messages
 
@@ -120,25 +119,25 @@ def approve_qarj_application(request, application_id):
     messages.success(request, 'Application approved successfully.')
     return redirect('admin_dashboard')  # Or wherever you want to redirect
 
-@admin.register(Zakat_Wallet)
-class ZakatWalletAdmin(admin.ModelAdmin):
-    list_display = ('mosque', 'total_amount', 'disbursable_amount', 'approved_zakat_holders_count','zakat_amount_for_each_person')
+# @admin.register(Zakat_Wallet)
+# class ZakatWalletAdmin(admin.ModelAdmin):
+#     list_display = ('mosque', 'total_amount', 'disbursable_amount', 'approved_zakat_holders_count','zakat_amount_for_each_person')
     
-    # Enable search functionality
-    search_fields = ('mosque__mosque_name', 'mosque__id')  # Search by mosque name
+#     # Enable search functionality
+#     search_fields = ('mosque__mosque_name', 'mosque__id')  # Search by mosque name
 
-    # Enable filters
-    list_filter = ('mosque__district', 'mosque__division')  # Filter by mosque's district and division
+#     # Enable filters
+#     list_filter = ('mosque__district', 'mosque__division')  # Filter by mosque's district and division
     
-    readonly_fields = ('total_amount', 'disbursable_amount', 'approved_zakat_holders_count', 'zakat_amount_for_each_person')
+#     readonly_fields = ('total_amount', 'disbursable_amount', 'approved_zakat_holders_count', 'zakat_amount_for_each_person')
 
-    def has_add_permission(self, request):
-        # Prevent manual creation of Personal Zakat Wallets from the admin interface
-        return False
+#     def has_add_permission(self, request):
+#         # Prevent manual creation of Personal Zakat Wallets from the admin interface
+#         return False
 
-    def has_delete_permission(self, request, obj=None):
-        # Prevent deletion of Personal Zakat Wallets from the admin interface
-        return False
+#     def has_delete_permission(self, request, obj=None):
+#         # Prevent deletion of Personal Zakat Wallets from the admin interface
+#         return False
 
 class ZakatProviderAdmin(admin.ModelAdmin):
     list_display = ('mosque', 'name', 'contact_number', 'donation_amount', 'donation_date')
@@ -174,18 +173,40 @@ class ZakatReceiverAdmin(admin.ModelAdmin):
         # Ensure that the save method logic in the model is respected
         super().save_model(request, obj, form, change)
 
-class PersonalZakatWalletAdmin(admin.ModelAdmin):
-    list_display = ('receiver', 'amount')
-    search_fields = ('receiver__name', 'receiver__mosque__mosque_name')
+# class PersonalZakatWalletAdmin(admin.ModelAdmin):
+#     list_display = ('receiver', 'amount')
+#     search_fields = ('receiver__name', 'receiver__mosque__mosque_name')
     
-    def has_add_permission(self, request):
-        # Prevent manual creation of Personal Zakat Wallets from the admin interface
-        return False
+#     def has_add_permission(self, request):
+#         # Prevent manual creation of Personal Zakat Wallets from the admin interface
+#         return False
 
-    def has_delete_permission(self, request, obj=None):
-        # Prevent deletion of Personal Zakat Wallets from the admin interface
-        return False
+#     def has_delete_permission(self, request, obj=None):
+#         # Prevent deletion of Personal Zakat Wallets from the admin interface
+#         return False
 
 
 admin.site.register(Zakat_Receiver, ZakatReceiverAdmin)
-admin.site.register(Personal_Zakat_Wallet, PersonalZakatWalletAdmin)
+# admin.site.register(Personal_Zakat_Wallet, PersonalZakatWalletAdmin)
+
+
+@admin.register(ImageCardBlog)
+class ImageCardBlogAdmin(admin.ModelAdmin):
+    list_display = ('name', 'order')
+    ordering = ('order',)
+
+
+
+@admin.register(EmployeeInfo)
+class EmployeeInfoAdmin(admin.ModelAdmin):
+    list_display = ('emp_code', 'emp_name', 'emp_DOB', 'emp_designation', 'emp_DOJ', 'emp_email', 'emp_phone')
+    search_fields = ('emp_code', 'emp_name', 'emp_email')  # Fields to search in the admin
+    list_filter = ('emp_designation', 'emp_DOJ')  # Add filter options in the admin
+    ordering = ('emp_DOJ',)  # Order by date of joining
+    readonly_fields = ('emp_code',)  # Make emp_code read-only in the admin
+
+    def get_readonly_fields(self, request, obj=None):
+        if obj:  # If editing an existing employee
+            return self.readonly_fields + ('emp_code',)
+        return self.readonly_fields
+

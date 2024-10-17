@@ -1,5 +1,5 @@
 from django import forms
-from .models import Mosque,Qarrj_Hasana_Account,Qarrj_Hasana_Apply,Zakat_Provider,BankInfo
+from .models import Mosque,Qarrj_Hasana_Account,Qarrj_Hasana_Apply,Zakat_Provider,Zakat_Receiver,BankInfo
 
 class BankInfoForm(forms.ModelForm):
     class Meta:
@@ -78,3 +78,25 @@ class ZakatProviderForm(forms.ModelForm):
     class Meta:
         model = Zakat_Provider
         fields = ['mosque', 'name', 'contact_number', 'address', 'donation_amount', 'transaction_screenshot']
+
+
+class ZakatReceiverForm(forms.ModelForm):
+    class Meta:
+        model = Zakat_Receiver
+        fields = [
+            'mosque', 'name', 'phone_number', 'address', 'nid_no', 'bank', 'bank_account_number',
+            'mobile_bank', 'mobile_bank_number', 'form_no', 'head_of_family_name', 'total_members_boy',
+            'total_members_girl', 'total_workable_persons', 'total_earnable_persons', 'source_of_income',
+            'total_monthly_income', 'total_monthly_expense', 'loan_amount', 'monthly_savings_amount',
+            'monthly_installment_amount', 'total_unpaid_installment_amount', 'have_bangla_translated_if_quran',
+            'recite_quran_daily', 'note'
+        ]
+
+    # Customize validation or any field as needed
+    def clean(self):
+        cleaned_data = super().clean()
+        income = cleaned_data.get("total_monthly_income")
+        expense = cleaned_data.get("total_monthly_expense")
+
+        if income and expense and income < expense:
+            raise forms.ValidationError("Income cannot be less than expense.")

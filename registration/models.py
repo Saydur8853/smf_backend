@@ -1,8 +1,11 @@
 from django.db import models
+from django.db.models import Max
+from django.utils.translation import gettext_lazy as _
 from decimal import Decimal
 from django.contrib.auth.hashers import make_password
 from django.utils.safestring import mark_safe
 from django.utils import timezone
+from datetime import datetime
 from django.core.exceptions import ValidationError  
 
 class AdminInformation(models.Model):
@@ -234,35 +237,35 @@ class Qarrj_Hasana_Apply(models.Model):
 
 
 
-class Zakat_Wallet(models.Model):
-    mosque = models.OneToOneField('Mosque', on_delete=models.CASCADE)  # Each mosque has one Zakat Wallet
-    total_amount = models.DecimalField(max_digits=15, decimal_places=2, default=Decimal('0.00'))
+# class Zakat_Wallet(models.Model):
+#     mosque = models.OneToOneField('Mosque', on_delete=models.CASCADE)  # Each mosque has one Zakat Wallet
+#     total_amount = models.DecimalField(max_digits=15, decimal_places=2, default=Decimal('0.00'))
     
-    @property
-    def disbursable_amount(self):
-        # Fetch the global settings
-        global_settings = Global_Settings.objects.first()
-        if not global_settings:
-            return self.total_amount
+#     @property
+#     def disbursable_amount(self):
+#         # Fetch the global settings
+#         global_settings = Global_Settings.objects.first()
+#         if not global_settings:
+#             return self.total_amount
         
-        # Calculate disbursable amount using the global service charge percentage
-        service_charge_percentage = global_settings.service_charge_percentage
-        return self.total_amount - (self.total_amount * service_charge_percentage / Decimal(100))
+#         # Calculate disbursable amount using the global service charge percentage
+#         service_charge_percentage = global_settings.service_charge_percentage
+#         return self.total_amount - (self.total_amount * service_charge_percentage / Decimal(100))
     
-    @property
-    def approved_zakat_holders_count(self):
-        # Count the number of approved Zakat_Receiver for this mosque
-        return Zakat_Receiver.objects.filter(mosque=self.mosque, verification=True).count()
+#     @property
+#     def approved_zakat_holders_count(self):
+#         # Count the number of approved Zakat_Receiver for this mosque
+#         return Zakat_Receiver.objects.filter(mosque=self.mosque, verification=True).count()
     
-    @property
-    def zakat_amount_for_each_person(self):
-        # Calculate zakat amount for each person
-        if self.approved_zakat_holders_count > 0:
-            return self.disbursable_amount / self.approved_zakat_holders_count
-        return Decimal('0.00')
+#     @property
+#     def zakat_amount_for_each_person(self):
+#         # Calculate zakat amount for each person
+#         if self.approved_zakat_holders_count > 0:
+#             return self.disbursable_amount / self.approved_zakat_holders_count
+#         return Decimal('0.00')
     
-    def __str__(self):
-        return f"Zakat Wallet for {self.mosque.mosque_name}"
+#     def __str__(self):
+#         return f"Zakat Wallet for {self.mosque.mosque_name}"
     
 class Zakat_Provider(models.Model):
     mosque = models.ForeignKey('Mosque', on_delete=models.CASCADE)
@@ -356,21 +359,64 @@ class Zakat_Receiver(models.Model):
     def __str__(self):
         return f"#{self.form_no} - {self.name} ({self.mosque.mosque_name})"
 
-class Personal_Zakat_Wallet(models.Model):
-    receiver = models.OneToOneField('Zakat_Receiver', on_delete=models.CASCADE)
-    amount = models.DecimalField(max_digits=15, decimal_places=2, default=Decimal('0.00'))
-    @property
-    def amount(self):
-        # Fetch the Zakat_Wallet for the receiver's mosque
-        zakat_wallet = Zakat_Wallet.objects.filter(mosque=self.receiver.mosque).first()
-        if zakat_wallet:
-            return zakat_wallet.zakat_amount_for_each_person
-        return Decimal('0.00')
+# class Personal_Zakat_Wallet(models.Model):
+#     receiver = models.OneToOneField('Zakat_Receiver', on_delete=models.CASCADE)
+#     amount = models.DecimalField(max_digits=15, decimal_places=2, default=Decimal('0.00'))
+#     @property
+#     def amount(self):
+#         # Fetch the Zakat_Wallet for the receiver's mosque
+#         zakat_wallet = Zakat_Wallet.objects.filter(mosque=self.receiver.mosque).first()
+#         if zakat_wallet:
+#             return zakat_wallet.zakat_amount_for_each_person
+#         return Decimal('0.00')
+
+#     def save(self, *args, **kwargs):
+#         # Set the amount to zakat_amount_for_each_person before saving
+#         self.amount = self.amount
+#         super().save(*args, **kwargs)
+
+#     def __str__(self):
+#         return f"Personal Zakat Wallet for {self.receiver.name} - Amount: {self.amount}"
+
+
+
+class ImageCardBlog(models.Model):
+    name = models.CharField(max_length=100)  # e.g., Qaarj Hasana, Zakat
+    description = models.TextField()  # The detailed description of the blog card
+    image = models.ImageField(upload_to='image_card_blogs/')  # Upload image
+    order = models.PositiveIntegerField(default=0)  # To order blogs dynamically in the view
+    
+    class Meta:
+        ordering = ['order']  # Ensures blogs are ordered by the 'order' field in the admin panel
+    
+    def __str__(self):
+        return self.name
+
+
+
+class EmployeeInfo(models.Model):
+    emp_code = models.CharField(max_length=20, unique=True, editable=False)  # Employee code, unique for each employee
+    emp_name = models.CharField(max_length=100)              # Employee name
+    emp_DOB = models.DateField()                              # Employee date of birth
+    emp_designation = models.CharField(max_length=50)        # Employee designation
+    emp_DOJ = models.DateField()                              # Employee date of joining
+    emp_email = models.EmailField(max_length=254, unique=True)  # Employee email, unique
+    emp_phone = models.CharField(max_length=15, blank=True)  # Employee phone number, optional
+    emp_address = models.TextField(blank=True)                # Employee address, optional
+    emp_pin = models.CharField(max_length=10, blank=True)    # Employee PIN code, optional
 
     def save(self, *args, **kwargs):
-        # Set the amount to zakat_amount_for_each_person before saving
-        self.amount = self.amount
-        super().save(*args, **kwargs)
+        if not self.emp_code:  # Only set emp_code if it is not already set
+            year = self.emp_DOB.year  # Get the year from the date of birth
+            # Get the latest emp_code for the current year
+            last_emp_code = EmployeeInfo.objects.filter(emp_code__startswith=f'EDOB{year}').aggregate(Max('emp_code'))['emp_code__max']
+            if last_emp_code:
+                # Extract the number from the last employee code and increment it
+                number = int(last_emp_code[-2:]) + 1
+            else:
+                number = 1
+            self.emp_code = f'ESMF{year}{number:02}'  # Generate new emp_code
+        super().save(*args, **kwargs)  # Call the real save() method
 
     def __str__(self):
-        return f"Personal Zakat Wallet for {self.receiver.name} - Amount: {self.amount}"
+        return f"{self.emp_name} ({self.emp_code})"

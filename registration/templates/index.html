@@ -417,16 +417,6 @@
                 <input type="text" name="address" required>
             </div>
             <br>
-            <!-- <div class="form-group">
-                {% if bank_info.bank_name %}
-                    <h4>Bank: {{ bank_info.bank_name }}</h4>
-                    <h5>Branch: {{ bank_info.get_branch_name }}</h5>
-                {% elif bank_info.mobile_bank_name %}
-                    <h4>Mobile Bank: {{ bank_info.mobile_bank_name }}</h4>
-                    <h5>Branch: {{ bank_info.get_branch_name }}</h5>
-                {% endif %}
-                <h5>AC NO: {{ bank_info.account_number }}</h5>
-            </div> -->
             <div class="form-group bank-info-container">
                 {% for bank_info in bank_info_list %}
                     <div class="bank-info-box">
@@ -455,7 +445,7 @@
     </div>
 </div>
 
-        <!-- Zakat Receiver Form Modal -->
+        <!-- Zakat Receiver Form Modal
         <div id="zakatReceiverModal" class="modal">
             <div class="modal-content">
                 <span class="close" id="closeZakatReceiverModal">&times;</span>
@@ -565,27 +555,41 @@
                     <button type="submit" class="btn">Submit</button>
                 </form>
             </div>
+        </div> -->
+        <!-- Zakat Receiver Form Modal -->
+        <div id="zakatReceiverModal" class="modal">
+            <div class="modal-content">
+                <span class="close" id="closeZakatReceiverModal">&times;</span>
+                <h3>Zakat Receiver Form</h3>
+                <form id="zakatReceiverForm" method="POST" class="form-layout">
+                    {% csrf_token %}
+                    {{ zakat_receiver_form.as_p }}
+                    <button type="submit" name="zakat_receiver_submit" class="btn">Submit</button>
+                </form>
+            </div>
         </div>
+
 
         <!-- Islamic Employment Modal -->
         <div id="employmentModal" class="modal">
             <div class="modal-content">
                 <span class="close">&times;</span>
                 <!-- Islamic Employment form content here -->
+                 <h3>COMING SOON.... </h3>
             </div>
         </div>
         <!-- Supply Chain Partner Modal -->
         <div id="scpModal" class="modal">
             <div class="modal-content">
                 <span class="close">&times;</span>
-                <!-- Islamic Employment form content here -->
+                <h3>COMING SOON.... </h3>
             </div>
         </div>
     </section>
     <section class="service" id="service">
         <div class="max-width">
             <h2 class="title" id="section-header">Our Services</h2>
-            <div class="boxes-container">
+            <!-- <div class="boxes-container">
                 <div class="box">
                     <div class="image-container">
                         <img src="qaarj.jpeg" alt="Image 1">
@@ -619,7 +623,19 @@
                         <div class="details">This program will empower youth with the post-training assessment.</div>
                     </div>
                 </div>
+            </div> -->
+            <div class="boxes-container image-card-blogs">
+                {% for blog in image_card_blogs %}
+                    <div class="box">
+                        <div class="image-container">
+                            <img src="{{ blog.image.url }}" alt="Image for {{ blog.name }}">
+                            <div class="intro">{{ blog.name }}</div>
+                            <div class="details">{{ blog.description }}</div>
+                        </div>
+                    </div>
+                {% endfor %}
             </div>
+            
         </div>
 
     </section>
@@ -720,6 +736,7 @@
         mobileBankField.addEventListener('change', toggleFields);
     });
 </script>
+
     
 </body>
 
