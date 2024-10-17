@@ -1,5 +1,20 @@
 from django import forms
-from .models import Mosque,Qarrj_Hasana_Account,Qarrj_Hasana_Apply,Zakat_Provider
+from .models import Mosque,Qarrj_Hasana_Account,Qarrj_Hasana_Apply,Zakat_Provider,BankInfo
+
+class BankInfoForm(forms.ModelForm):
+    class Meta:
+        model = BankInfo
+        fields = ['bank_name', 'mobile_bank_name', 'branch_name', 'account_number']
+
+    def clean(self):
+        cleaned_data = super().clean()
+        bank_name = cleaned_data.get('bank_name')
+        mobile_bank_name = cleaned_data.get('mobile_bank_name')
+
+        if bank_name and mobile_bank_name:
+            raise forms.ValidationError('You can only select either a bank or a mobile bank, not both.')
+        if not bank_name and not mobile_bank_name:
+            raise forms.ValidationError('You must select either a bank or a mobile bank.')
 
 class MosqueRegistrationForm(forms.ModelForm):
     class Meta:

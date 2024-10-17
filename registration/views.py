@@ -2,7 +2,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.hashers import check_password
-from .models import Mosque,HomePageModel,BannerModel,Qarrj_Hasana_Account,Qarrj_Hasana_Apply,AdminInformation
+from .models import Mosque,HomePageModel,BannerModel,Qarrj_Hasana_Account,Qarrj_Hasana_Apply,AdminInformation,BankInfo
 from .forms import MosqueRegistrationForm, QarrjHasanaAccountForm, QarrjHasanaApplyForm,ZakatProviderForm
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
@@ -11,6 +11,8 @@ def home(request):
     home_page = HomePageModel.objects.last()  # Get the last record
     banners = BannerModel.objects.all().order_by('-id')[:5]  # Get the last 5 banners
     admin_info = AdminInformation.objects.first()
+    bank_info_list = BankInfo.objects.all()
+    
 
     # Handle mosque registration form submission
     if request.method == 'POST' and 'mosque_submit' in request.POST:
@@ -71,6 +73,7 @@ def home(request):
         'qarj_form': qarj_form,  # Qarj Hasana registration form
         'zakat_form': zakat_form,  # Zakat Provider form
         'admin_info': admin_info,
+        'bank_info_list': bank_info_list,
     }
 
     return render(request, 'index.html', context)

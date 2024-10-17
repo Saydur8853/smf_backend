@@ -3,6 +3,7 @@ from decimal import Decimal
 from django.contrib.auth.hashers import make_password
 from django.utils.safestring import mark_safe
 from django.utils import timezone
+from django.core.exceptions import ValidationError  
 
 class AdminInformation(models.Model):
     phone_number_primary = models.CharField(max_length=20)
@@ -101,6 +102,37 @@ class MobileBank(models.Model):
 
     def __str__(self):
         return self.name
+
+# Bank Info model
+class BankInfo(models.Model):
+    bank_name = models.ForeignKey(Bank, null=True, blank=True, on_delete=models.SET_NULL)
+    mobile_bank_name = models.ForeignKey(MobileBank, null=True, blank=True, on_delete=models.SET_NULL)
+    branch_name = models.CharField(max_length=255, null=True, blank=True)
+    account_number = models.CharField(max_length=50)
+
+    def __str__(self):
+        if self.bank_name:
+            return f'{self.bank_name} - {self.branch_name}'
+        elif self.mobile_bank_name:
+            return f'{self.mobile_bank_name}'
+        return 'Bank Info'
+
+    def get_branch_name(self):
+        """Returns 'Mobile Banking' if it's a mobile bank, else returns the branch name."""
+        if self.mobile_bank_name:
+            return "Mobile Banking"
+        return self.branch_name or ""
+
+    def clean(self):
+        """Custom validation to ensure that only one of bank_name or mobile_bank_name is selected."""
+        if self.bank_name and self.mobile_bank_name:
+            raise ValidationError('You can only select either a bank or a mobile bank, not both.')
+        if not self.bank_name and not self.mobile_bank_name:
+            raise ValidationError('You must select either a bank or a mobile bank.')
+
+    class Meta:
+        verbose_name = 'Bank Info'
+        verbose_name_plural = 'Bank Info'
 
 
 class Qarrj_Hasana_Account(models.Model):

@@ -417,10 +417,29 @@
                 <input type="text" name="address" required>
             </div>
             <br>
-            <div class="form-group" >
-                <h4>Bank: Islami Bank Ltd </h4>
-                <h5>Branch: Dhanmondi</h5>
-                <h5>AC NO: 01232312323123</h5>
+            <!-- <div class="form-group">
+                {% if bank_info.bank_name %}
+                    <h4>Bank: {{ bank_info.bank_name }}</h4>
+                    <h5>Branch: {{ bank_info.get_branch_name }}</h5>
+                {% elif bank_info.mobile_bank_name %}
+                    <h4>Mobile Bank: {{ bank_info.mobile_bank_name }}</h4>
+                    <h5>Branch: {{ bank_info.get_branch_name }}</h5>
+                {% endif %}
+                <h5>AC NO: {{ bank_info.account_number }}</h5>
+            </div> -->
+            <div class="form-group bank-info-container">
+                {% for bank_info in bank_info_list %}
+                    <div class="bank-info-box">
+                        {% if bank_info.bank_name %}
+                            <h4>Bank: {{ bank_info.bank_name }}</h4>
+                            <h5>Branch: {{ bank_info.get_branch_name }}</h5>
+                        {% elif bank_info.mobile_bank_name %}
+                            <h4>Mobile Bank: {{ bank_info.mobile_bank_name }}</h4>
+                            <h5>Branch: {{ bank_info.get_branch_name }}</h5>
+                        {% endif %}
+                        <h5>AC NO: {{ bank_info.account_number }}</h5>
+                    </div>
+                {% endfor %}
             </div>
             <br>
             <div class="form-group">
@@ -677,6 +696,30 @@
             window.location.href = '/';  // Change this to your home page URL if different
         }
     </script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const bankField = document.querySelector('#id_bank_name');
+        const mobileBankField = document.querySelector('#id_mobile_bank_name');
+
+        function toggleFields() {
+            if (bankField.value) {
+                mobileBankField.disabled = true;
+            } else {
+                mobileBankField.disabled = false;
+            }
+
+            if (mobileBankField.value) {
+                bankField.disabled = true;
+            } else {
+                bankField.disabled = false;
+            }
+        }
+
+        bankField.addEventListener('change', toggleFields);
+        mobileBankField.addEventListener('change', toggleFields);
+    });
+</script>
     
 </body>
 

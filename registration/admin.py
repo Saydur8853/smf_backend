@@ -1,6 +1,6 @@
 from django.contrib import admin
 from decimal import Decimal
-from .models import AdminInformation,HomePageModel,BannerModel,Global_Settings, Mosque,Bank, MobileBank, Qarrj_Hasana_Account,Qarrj_Hasana_Apply, Zakat_Wallet, Zakat_Provider,Zakat_Receiver, Personal_Zakat_Wallet
+from .models import AdminInformation,HomePageModel,BannerModel,Global_Settings, Mosque,Bank, MobileBank,BankInfo, Qarrj_Hasana_Account,Qarrj_Hasana_Apply, Zakat_Wallet, Zakat_Provider,Zakat_Receiver, Personal_Zakat_Wallet
 from django.contrib import admin
 from django.shortcuts import redirect
 from django.contrib import messages
@@ -51,8 +51,33 @@ class MosqueAdmin(admin.ModelAdmin):
 
 admin.site.register(Mosque, MosqueAdmin)
 
-admin.site.register(Bank)
-admin.site.register(MobileBank)
+# Register Bank model
+@admin.register(Bank)
+class BankAdmin(admin.ModelAdmin):
+    list_display = ('name',)
+    search_fields = ('name',)
+
+# Register Mobile Bank model
+@admin.register(MobileBank)
+class MobileBankAdmin(admin.ModelAdmin):
+    list_display = ('name',)
+    search_fields = ('name',)
+
+# Register Bank Info model
+@admin.register(BankInfo)
+class BankInfoAdmin(admin.ModelAdmin):
+    list_display = ('get_bank_or_mobile_bank', 'branch_name', 'account_number')
+    search_fields = ('account_number', 'branch_name', 'bank_name__name', 'mobile_bank_name__name')
+    list_filter = ('bank_name', 'mobile_bank_name')
+
+    def get_bank_or_mobile_bank(self, obj):
+        if obj.bank_name:
+            return obj.bank_name
+        elif obj.mobile_bank_name:
+            return obj.mobile_bank_name
+        return 'N/A'
+
+    get_bank_or_mobile_bank.short_description = 'Bank/Mobile Bank'
 
 @admin.register(Qarrj_Hasana_Account)
 class QarrjHasanaAccountAdmin(admin.ModelAdmin):
