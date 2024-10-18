@@ -395,15 +395,15 @@ class ImageCardBlog(models.Model):
 
 
 class EmployeeInfo(models.Model):
-    emp_code = models.CharField(max_length=20, unique=True, editable=False)  # Employee code, unique for each employee
-    emp_name = models.CharField(max_length=100)              # Employee name
-    emp_DOB = models.DateField()                              # Employee date of birth
-    emp_designation = models.CharField(max_length=50)        # Employee designation
-    emp_DOJ = models.DateField()                              # Employee date of joining
-    emp_email = models.EmailField(max_length=254, unique=True)  # Employee email, unique
-    emp_phone = models.CharField(max_length=15, blank=True)  # Employee phone number, optional
-    emp_address = models.TextField(blank=True)                # Employee address, optional
-    emp_pin = models.CharField(max_length=10, blank=True)    # Employee PIN code, optional
+    emp_code = models.CharField(max_length=20, unique=True, editable=False) 
+    emp_name = models.CharField(max_length=100)            
+    emp_DOB = models.DateField()                              
+    emp_designation = models.CharField(max_length=50)      
+    emp_DOJ = models.DateField()                           
+    emp_email = models.EmailField(max_length=254, unique=True)  
+    emp_phone = models.CharField(max_length=15, blank=True)  
+    emp_address = models.TextField(blank=True)                
+    emp_pin = models.CharField(max_length=4) 
 
     def save(self, *args, **kwargs):
         if not self.emp_code:  # Only set emp_code if it is not already set

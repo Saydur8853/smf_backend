@@ -161,4 +161,10 @@ def logout_view(request):
 
 
 def about(request):
-    return render(request, 'about.html')
+    admin_info = AdminInformation.objects.first()
+
+    context = {
+        'admin_info': admin_info,
+        
+    }
+    return render(request, 'about.html', context)
