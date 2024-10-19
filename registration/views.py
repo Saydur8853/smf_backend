@@ -2,7 +2,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.hashers import check_password
-from .models import Mosque,HomePageModel,BannerModel,Qarrj_Hasana_Account,Qarrj_Hasana_Apply,AdminInformation,BankInfo,ImageCardBlog,AboutUsBlock,TeamMemberBlock
+from .models import Mosque,HomePageModel,BannerModel,Qarrj_Hasana_Account,Qarrj_Hasana_Apply,AdminInformation,BankInfo,ImageCardBlog,AboutUsBlock,TeamMemberBlock,EmployeeInfo
 from .forms import MosqueRegistrationForm, QarrjHasanaAccountForm, QarrjHasanaApplyForm,ZakatProviderForm,ZakatReceiverForm
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
@@ -175,14 +175,29 @@ def about(request):
 
 
 def attendance(request):
-    # admin_info = AdminInformation.objects.first()
-    # about_content = AboutUsBlock.objects.first()
-    # team_members = TeamMemberBlock.objects.all()
+    admin_info = AdminInformation.objects.first()
+    about_content = AboutUsBlock.objects.first()
+    employees = EmployeeInfo.objects.all()
+
+    if request.method == 'POST':
+        user = request.POST.get('user')
+        psw = request.POST.get('psw')
+
+        try:
+            employee = EmployeeInfo.objects.get(emp_email=user, emp_pin=psw)
+            messages.success(request, f"Welcome, {employee.emp_name}!")
+            return redirect('success_page')  # Redirect to the home page (assuming 'home' exists in your URLs)
+        except EmployeeInfo.DoesNotExist:
+            messages.error(request, "Invalid credentials. Please try again.")
 
     context = {
-        # 'admin_info': admin_info,
-        # 'about_content': about_content,
-        # 'team_members': team_members, 
+        'admin_info': admin_info,
+        'about_content': about_content,
+        'employees': employees,
+    
         
     }
     return render(request, 'attendance.html', context)
+
+def success_page(request):
+    return render(request, 'success.html')

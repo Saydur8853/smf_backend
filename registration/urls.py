@@ -12,6 +12,7 @@ urlpatterns = [
     path('logout/', views.logout_view, name='logout'),
     path('about/', views.about, name='about'),
     path('attendance/', views.attendance, name='attendance'),
+    path('attendance/success/', views.success_page, name='success_page'),
 
 ]
 if settings.DEBUG:
