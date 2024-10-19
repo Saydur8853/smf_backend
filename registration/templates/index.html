@@ -36,7 +36,7 @@
                 </a>
             </div>
             <ul class="menu">
-                <li><a href="#home">Home</a></li>
+                <li><a href="{% url 'home' %}">Home</a></li>
                 <li><a href="#" id="mosqueBtn">Mosque</a></li>
                 <li><a href="#service">Services</a></li>
                 <li><a href="#ie">Islamic Employment</a></li>
@@ -655,10 +655,12 @@
                 <h3>Useful Links</h3>
                 <ul>
                     <li><a href="#">Forum</a></li>
-                    <li><a href="#">News Links</a></li>
+                    <!-- <li><a href="#">News Links</a></li>
                     <li><a href="#">Event Gallery</a></li>
                     <li><a href="#">Brochure</a></li>
-                    <li><a href="#">Business Shorts</a></li>
+                    <li><a href="#">Business Shorts</a></li> -->
+                    <li><a href="{% url 'attendance' %}">Attendance management</a></li>
+
                 </ul>
             </div>
             <div class="footer-column">

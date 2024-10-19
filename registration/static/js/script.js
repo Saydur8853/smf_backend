@@ -28,19 +28,27 @@ $(document).ready(function () {
     });
 
     // Smooth scroll on menu items click and close the menu
-    $('.navbar .menu li a').click(function (e) {
-        e.preventDefault(); // Prevent default link behavior
-
-        // Smooth scroll to the section
-        let targetSection = $(this).attr('href');
-        $('html, body').animate({
-            scrollTop: $(targetSection).offset().top
-        }, 800); // Adjust 800 for scroll speed
-
-        // Close the menu and deactivate the hamburger icon
-        $('.navbar .menu').removeClass('active');
-        $('.menu-btn i').removeClass('active');
-    });
+    // $('.navbar .menu li a').click(function (e) {
+    //     const targetSection = $(this).attr('href');
+    
+    //     // Check if the link is an anchor link (starts with #)
+    //     if (targetSection.startsWith('#')) {
+    //         e.preventDefault(); // Prevent default link behavior for anchors
+    
+    //         // Smooth scroll to the section
+    //         $('html, body').animate({
+    //             scrollTop: $(targetSection).offset().top
+    //         }, 800); // Adjust 800 for scroll speed
+    //     } else {
+    //         // Let it follow the normal redirect for external/internal links like 'home'
+    //         window.location.href = targetSection;
+    //     }
+    
+    //     // Close the menu and deactivate the hamburger icon
+    //     $('.navbar .menu').removeClass('active');
+    //     $('.menu-btn i').removeClass('active');
+    // });
+    
 
     // Modal functionality
     const modal = document.getElementById('registrationModal');

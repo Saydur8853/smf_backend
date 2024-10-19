@@ -2,7 +2,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.hashers import check_password
-from .models import Mosque,HomePageModel,BannerModel,Qarrj_Hasana_Account,Qarrj_Hasana_Apply,AdminInformation,BankInfo,ImageCardBlog
+from .models import Mosque,HomePageModel,BannerModel,Qarrj_Hasana_Account,Qarrj_Hasana_Apply,AdminInformation,BankInfo,ImageCardBlog,AboutUsBlock,TeamMemberBlock
 from .forms import MosqueRegistrationForm, QarrjHasanaAccountForm, QarrjHasanaApplyForm,ZakatProviderForm,ZakatReceiverForm
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
@@ -162,9 +162,27 @@ def logout_view(request):
 
 def about(request):
     admin_info = AdminInformation.objects.first()
+    about_content = AboutUsBlock.objects.first()
+    team_members = TeamMemberBlock.objects.all()
 
     context = {
         'admin_info': admin_info,
+        'about_content': about_content,
+        'team_members': team_members, 
         
     }
     return render(request, 'about.html', context)
+
+
+def attendance(request):
+    # admin_info = AdminInformation.objects.first()
+    # about_content = AboutUsBlock.objects.first()
+    # team_members = TeamMemberBlock.objects.all()
+
+    context = {
+        # 'admin_info': admin_info,
+        # 'about_content': about_content,
+        # 'team_members': team_members, 
+        
+    }
+    return render(request, 'attendance.html', context)

@@ -420,3 +420,27 @@ class EmployeeInfo(models.Model):
 
     def __str__(self):
         return f"{self.emp_name} ({self.emp_code})"
+
+
+
+
+class AboutUsBlock(models.Model):
+    title = models.CharField(max_length=255, default="About SME")
+    description = models.TextField()
+    vision_title = models.CharField(max_length=255, default="Our Vision")
+    vision_description = models.TextField()
+    mission_title = models.CharField(max_length=255, default="Our Mission")
+    mission_description = models.TextField()
+
+    def __str__(self):
+        return self.title
+
+
+class TeamMemberBlock(models.Model):
+    name = models.CharField(max_length=255)
+    role = models.CharField(max_length=255)
+    image = models.ImageField(upload_to='team_images/')
+    bio = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return self.name

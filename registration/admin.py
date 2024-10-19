@@ -1,6 +1,6 @@
 from django.contrib import admin
 from decimal import Decimal
-from .models import AdminInformation,HomePageModel,BannerModel,Global_Settings, Mosque,Bank, MobileBank,BankInfo, Qarrj_Hasana_Account,Qarrj_Hasana_Apply, Zakat_Provider,Zakat_Receiver,ImageCardBlog,EmployeeInfo
+from .models import AdminInformation,HomePageModel,BannerModel,Global_Settings, Mosque,Bank, MobileBank,BankInfo, Qarrj_Hasana_Account,Qarrj_Hasana_Apply, Zakat_Provider,Zakat_Receiver,ImageCardBlog,EmployeeInfo,AboutUsBlock,TeamMemberBlock
 from django.shortcuts import redirect
 from django.contrib import messages
 
@@ -210,3 +210,7 @@ class EmployeeInfoAdmin(admin.ModelAdmin):
             return self.readonly_fields + ('emp_code',)
         return self.readonly_fields
 
+
+
+admin.site.register(AboutUsBlock)
+admin.site.register(TeamMemberBlock)

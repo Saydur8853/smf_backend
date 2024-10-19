@@ -11,6 +11,7 @@ urlpatterns = [
     path('dashboard/', views.dashboard, name='dashboard'),
     path('logout/', views.logout_view, name='logout'),
     path('about/', views.about, name='about'),
+    path('attendance/', views.attendance, name='attendance'),
 
 ]
 if settings.DEBUG:

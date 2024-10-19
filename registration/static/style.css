@@ -558,7 +558,7 @@ h2 {
 }
 
 .about {
-    padding: 50px 0;
+    padding:100px;
 }
 
 .about .title {
@@ -623,15 +623,16 @@ h2 {
 .team-member {
     width: 30%;
     text-align: center;
-    padding: 10px;
+    padding: 100px 10px;
 }
 
 .team-member img {
     width: 200px;
     height: 200px;
-    border-radius: 50%;
+    border-radius: 50%;  /* Change this line to apply border radius */
+    border: 3px solid #17153b;  /* Add this line to apply a blue border */
     margin-bottom: 15px;
-    /* object-fit: cover; */
+    object-fit: cover;  /* Uncomment this line if you want to maintain aspect ratio */
 }
 
 .team-member h4 {
@@ -644,7 +645,6 @@ h2 {
     font-size: 16px;
     color: #777;
 }
-
 .service {
     text-align: center;
     margin-bottom: 40px; /* Adds space between the header and boxes */
