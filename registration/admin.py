@@ -199,11 +199,11 @@ class ImageCardBlogAdmin(admin.ModelAdmin):
 
 @admin.register(EmployeeInfo)
 class EmployeeInfoAdmin(admin.ModelAdmin):
-    list_display = ('emp_code', 'emp_name', 'emp_DOB', 'emp_designation', 'emp_DOJ', 'emp_email', 'emp_phone')
+    list_display = ('emp_name','emp_DOB', 'emp_designation', 'emp_DOJ', 'emp_email','emp_pin', 'emp_phone')
     search_fields = ('emp_code', 'emp_name', 'emp_email')  # Fields to search in the admin
     list_filter = ('emp_designation', 'emp_DOJ')  # Add filter options in the admin
-    ordering = ('emp_DOJ',)  # Order by date of joining
-    readonly_fields = ('emp_code',)  # Make emp_code read-only in the admin
+    ordering = ('emp_code',)  # Order by date of joining
+    # readonly_fields = ('emp_code',)  # Make emp_code read-only in the admin
 
     def get_readonly_fields(self, request, obj=None):
         if obj:  # If editing an existing employee

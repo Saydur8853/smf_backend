@@ -185,10 +185,16 @@ def attendance(request):
 
         try:
             employee = EmployeeInfo.objects.get(emp_email=user, emp_pin=psw)
-            messages.success(request, f"Welcome, {employee.emp_name}!")
-            return redirect('success_page')  # Redirect to the home page (assuming 'home' exists in your URLs)
+            request.session['emp_code'] = employee.emp_code
+            request.session['emp_name'] = employee.emp_name
+            request.session['emp_email'] = employee.emp_email
+            request.session['emp_phone'] = employee.emp_phone
+            request.session['emp_designation'] = employee.emp_designation
+            request.session['emp_photo'] = employee.photo.url  # Store the URL of the photo
+
+            return redirect('success_page')  # Redirect to success page
         except EmployeeInfo.DoesNotExist:
-            messages.error(request, "Invalid credentials. Please try again.")
+            messages.error(request, None)
 
     context = {
         'admin_info': admin_info,
@@ -200,4 +206,14 @@ def attendance(request):
     return render(request, 'attendance.html', context)
 
 def success_page(request):
-    return render(request, 'success.html')
+    # Retrieve employee data from session
+    emp_data = {
+        'emp_code': request.session.get('emp_code'),
+        'emp_name': request.session.get('emp_name'),
+        'emp_email': request.session.get('emp_email'),
+        'emp_phone': request.session.get('emp_phone'),
+        'emp_designation': request.session.get('emp_designation'),
+        'emp_photo': request.session.get('emp_photo'),
+    }
+
+    return render(request, 'success.html', {'employee': emp_data})

@@ -68,7 +68,7 @@
         </div>
         <form method="POST">
             {% csrf_token %}
-            <h3>Attendance Form</h3>
+            <h3>Emplyee House</h3>
             
             <!-- Display any error or success messages -->
             {% if messages %}
@@ -88,8 +88,8 @@
             </select>
     
             <label for="psw">PIN</label>
-            <input type="password" name="psw" id="psw" placeholder="Enter 4 digit pin" autocomplete="password" required />
-    
+            <input type="password" name="psw" id="psw" placeholder="Enter 4 digit pin" maxlength="4" pattern="\d{4}" autocomplete="password" required />
+            <span id="error-message" class="error" style="color: white;">Only numeric digits are allowed!</span>
             <button type="submit">Login Now</button>
         </form>
     </div>
@@ -154,6 +154,31 @@
 
     <!-- Include FontAwesome for icons -->
     <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <script>
+        const input = document.getElementById('psw');
+        const errorMessage = document.getElementById('error-message');
+
+        input.addEventListener('input', function(e) {
+            // Remove any non-numeric characters
+            const invalidChars = this.value.replace(/\d/g, '');
+            if (invalidChars.length > 0) {
+                // Show the error message if there's invalid input
+                errorMessage.style.display = 'inline';
+            } else {
+                // Hide the error message if the input is valid
+                errorMessage.style.display = 'none';
+            }
+            // Keep only numeric characters
+            this.value = this.value.replace(/\D/g, '');
+        });
+
+        input.addEventListener('blur', function() {
+            // Hide the error message when the field loses focus
+            if (this.value.length === 0) {
+                errorMessage.style.display = 'none';
+            }
+        });
+    </script>
 
     <script src="{% static 'js/script.js' %}"></script>
 </body>

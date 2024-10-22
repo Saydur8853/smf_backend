@@ -1,3 +1,4 @@
+import random
 from django.db import models
 from django.db.models import Max
 from django.utils.translation import gettext_lazy as _
@@ -7,6 +8,7 @@ from django.utils.safestring import mark_safe
 from django.utils import timezone
 from datetime import datetime
 from django.core.exceptions import ValidationError  
+from django.db import transaction
 
 class AdminInformation(models.Model):
     phone_number_primary = models.CharField(max_length=20)
@@ -393,9 +395,10 @@ class ImageCardBlog(models.Model):
         return self.name
 
 
-
+from django.db.models import Max
 class EmployeeInfo(models.Model):
     emp_code = models.CharField(max_length=20, unique=True, editable=False) 
+    photo = models.ImageField(upload_to='emp_photo/')
     emp_name = models.CharField(max_length=100)            
     emp_DOB = models.DateField()                              
     emp_designation = models.CharField(max_length=50)      
@@ -403,24 +406,26 @@ class EmployeeInfo(models.Model):
     emp_email = models.EmailField(max_length=254, unique=True)  
     emp_phone = models.CharField(max_length=15, blank=True)  
     emp_address = models.TextField(blank=True)                
-    emp_pin = models.CharField(max_length=4) 
+    emp_pin = models.CharField(max_length=4, editable=False) 
 
     def save(self, *args, **kwargs):
         if not self.emp_code:  # Only set emp_code if it is not already set
-            year = self.emp_DOB.year  # Get the year from the date of birth
-            # Get the latest emp_code for the current year
-            last_emp_code = EmployeeInfo.objects.filter(emp_code__startswith=f'EDOB{year}').aggregate(Max('emp_code'))['emp_code__max']
+            # Get the latest emp_code and extract the numeric part
+            last_emp_code = EmployeeInfo.objects.aggregate(Max('emp_code'))['emp_code__max']
             if last_emp_code:
-                # Extract the number from the last employee code and increment it
-                number = int(last_emp_code[-2:]) + 1
+                # Extract the last 4 digits and increment
+                number = int(last_emp_code[-4:]) + 1
             else:
                 number = 1
-            self.emp_code = f'ESMF{year}{number:02}'  # Generate new emp_code
+            self.emp_code = f'ESMF{number:04}'  # Generate new emp_code with 4 digits
+
+        if not self.emp_pin:  # Set emp_pin if it is not already set
+            self.emp_pin = f'{random.randint(1000, 9999)}'  # Generate random 4-digit pin
+        
         super().save(*args, **kwargs)  # Call the real save() method
 
     def __str__(self):
         return f"{self.emp_name} ({self.emp_code})"
-
 
 
 
