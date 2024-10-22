@@ -6,6 +6,32 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Attendance</title>
   <link rel="stylesheet" href="{% static 'attd_success.css' %}">
+  <style>
+    /* Add some basic styling for the buttons */
+    .btn {
+      padding: 10px 20px;
+      margin: 10px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    .active {
+      background-color: #4CAF50; /* Green */
+      color: white;
+    }
+
+    .inactive {
+      background-color: #f44336; /* Red */
+      color: white;
+    }
+
+    .logout-btn {
+      background-color: #008CBA; /* Blue */
+      color: white;
+    }
+  </style>
 </head>
 <body>
 
@@ -19,37 +45,43 @@
       <p class="employee-designation">{{ employee.emp_designation }}</p>
     </div>
 
-    <!-- Check-In/Sign-Out Buttons -->
+    <!-- Check-In/Sign-Out/Log Out Buttons -->
     <div class="buttons-section">
       <button id="checkInBtn" class="btn active" onclick="checkIn()">Check-In</button>
       <button id="signOutBtn" class="btn inactive" disabled onclick="signOut()">Sign-Out</button>
+      <button id="logoutBtn" class="btn logout-btn" onclick="logOut()">Log Out</button>
     </div>
   </div>
   
   <script>
+    function checkIn() {
+      // Activate the Sign-Out button and deactivate the Check-In button
+      document.getElementById("checkInBtn").disabled = true;
+      document.getElementById("checkInBtn").classList.remove("active");
+      document.getElementById("checkInBtn").classList.add("inactive");
 
-function checkIn() {
-  // Activate the Sign-Out button and deactivate the Check-In button
-  document.getElementById("checkInBtn").disabled = true;
-  document.getElementById("checkInBtn").classList.remove("active");
-  document.getElementById("checkInBtn").classList.add("inactive");
+      document.getElementById("signOutBtn").disabled = false;
+      document.getElementById("signOutBtn").classList.remove("inactive");
+      document.getElementById("signOutBtn").classList.add("active");
+    }
 
-  document.getElementById("signOutBtn").disabled = false;
-  document.getElementById("signOutBtn").classList.remove("inactive");
-  document.getElementById("signOutBtn").classList.add("active");
-}
+    function signOut() {
+      // Activate the Check-In button and deactivate the Sign-Out button
+      document.getElementById("signOutBtn").disabled = true;
+      document.getElementById("signOutBtn").classList.remove("active");
+      document.getElementById("signOutBtn").classList.add("inactive");
 
-function signOut() {
-  // Activate the Check-In button and deactivate the Sign-Out button
-  document.getElementById("signOutBtn").disabled = true;
-  document.getElementById("signOutBtn").classList.remove("active");
-  document.getElementById("signOutBtn").classList.add("inactive");
+      document.getElementById("checkInBtn").disabled = false;
+      document.getElementById("checkInBtn").classList.remove("inactive");
+      document.getElementById("checkInBtn").classList.add("active");
+    }
 
-  document.getElementById("checkInBtn").disabled = false;
-  document.getElementById("checkInBtn").classList.remove("inactive");
-  document.getElementById("checkInBtn").classList.add("active");
-}
-</script>
+    function logOut() {
+      // Handle the log out action
+      // For example, redirect to the login page or perform an AJAX logout
+      window.location.href = "{% url 'attendance' %}"; // Adjust this URL as needed
+    }
+  </script>
 
 </body>
 </html>
