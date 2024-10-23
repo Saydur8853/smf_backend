@@ -17,19 +17,23 @@
       font-size: 16px;
     }
 
-    .active {
-      background-color: #4CAF50; /* Green */
-      color: white;
-    }
-
-    .inactive {
-      background-color: #f44336; /* Red */
-      color: white;
-    }
-
     .logout-btn {
-      background-color: #008CBA; /* Blue */
+      background-color: #01141b; /* Blue */
       color: white;
+    }
+
+    .clock-container {
+      margin-top: 20px;
+      text-align: center;
+      font-weight: bold;
+    }
+    /* Custom styling for date and time */
+    #date {
+      font-size: 20px; /* Date font size */
+    }
+
+    #time {
+      font-size: 25px; /* Time font size */
     }
   </style>
 </head>
@@ -45,6 +49,12 @@
       <p class="employee-designation">{{ employee.emp_designation }}</p>
     </div>
 
+    <!-- Clock Section -->
+    <div class="clock-container">
+      <p id="time"></p>
+      <p id="date"></p>
+    </div>
+
     <!-- Check-In/Sign-Out/Log Out Buttons -->
     <div class="buttons-section">
       <button id="checkInBtn" class="btn active" onclick="checkIn()">Check-In</button>
@@ -54,6 +64,28 @@
   </div>
   
   <script>
+      // Function to format the date in DD-MMM-YYYY format
+      function formatDate(dateObj) {
+        const day = String(dateObj.getDate()).padStart(2, '0'); // Pad single digits
+        const monthNames = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+        const month = monthNames[dateObj.getMonth()];
+        const year = dateObj.getFullYear();
+        return `${day}-${month}-${year}`;
+      }
+
+      // Function to display the clock
+      function updateClock() {
+        var now = new Date();
+        var date = formatDate(now);
+        var time = now.toLocaleTimeString();
+        document.getElementById('date').textContent = date;
+        document.getElementById('time').textContent = time;
+      }
+
+    // Update the clock every second
+    setInterval(updateClock, 1000);
+    updateClock(); // Initial call to display clock immediately
+
     function checkIn() {
       // Activate the Sign-Out button and deactivate the Check-In button
       document.getElementById("checkInBtn").disabled = true;
@@ -63,6 +95,23 @@
       document.getElementById("signOutBtn").disabled = false;
       document.getElementById("signOutBtn").classList.remove("inactive");
       document.getElementById("signOutBtn").classList.add("active");
+      // Send POST request for check-in
+      fetch("{% url 'success_page' %}", {
+          method: 'POST',
+          headers: {
+              'X-CSRFToken': '{{ csrf_token }}',
+              'Content-Type': 'application/x-www-form-urlencoded'
+          },
+          body: new URLSearchParams({
+              'action': 'check_in'
+          })
+      })
+      .then(response => response.json())
+      .then(data => {
+          if (data.status === 'checked_in') {
+              alert('Checked in at: ' + data.in_time);
+          }
+      });
     }
 
     function signOut() {
@@ -74,6 +123,25 @@
       document.getElementById("checkInBtn").disabled = false;
       document.getElementById("checkInBtn").classList.remove("inactive");
       document.getElementById("checkInBtn").classList.add("active");
+
+
+      // Send POST request for sign-out
+      fetch("{% url 'success_page' %}", {
+          method: 'POST',
+          headers: {
+              'X-CSRFToken': '{{ csrf_token }}',
+              'Content-Type': 'application/x-www-form-urlencoded'
+          },
+          body: new URLSearchParams({
+              'action': 'sign_out'
+          })
+      })
+      .then(response => response.json())
+      .then(data => {
+          if (data.status === 'signed_out') {
+              alert('Signed out at: ' + data.out_time);
+          }
+      });
     }
 
     function logOut() {
@@ -82,6 +150,9 @@
       window.location.href = "{% url 'attendance' %}"; // Adjust this URL as needed
     }
   </script>
+
+
+
 
 </body>
 </html>

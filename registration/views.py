@@ -1,11 +1,16 @@
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, redirect
 from django.contrib import messages
+from django.http import JsonResponse
+from django.utils.timezone import now
+from django.utils import timezone
+
 from django.contrib.auth.hashers import check_password
-from .models import Mosque,HomePageModel,BannerModel,Qarrj_Hasana_Account,Qarrj_Hasana_Apply,AdminInformation,BankInfo,ImageCardBlog,AboutUsBlock,TeamMemberBlock,EmployeeInfo
+from .models import Mosque,HomePageModel,BannerModel,Qarrj_Hasana_Account,Qarrj_Hasana_Apply,AdminInformation,BankInfo,ImageCardBlog,AboutUsBlock,TeamMemberBlock,EmployeeInfo,Attendance
 from .forms import MosqueRegistrationForm, QarrjHasanaAccountForm, QarrjHasanaApplyForm,ZakatProviderForm,ZakatReceiverForm
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
+from django.views.decorators.csrf import csrf_exempt
 
 def home(request):
     home_page = HomePageModel.objects.last()  # Get the last record
@@ -205,6 +210,7 @@ def attendance(request):
     }
     return render(request, 'attendance.html', context)
 
+@csrf_exempt
 def success_page(request):
     # Retrieve employee data from session
     emp_data = {
@@ -215,5 +221,30 @@ def success_page(request):
         'emp_designation': request.session.get('emp_designation'),
         'emp_photo': request.session.get('emp_photo'),
     }
+
+    if request.method == 'POST':
+        action = request.POST.get('action')
+
+        if action == 'check_in':
+            # Create a new attendance record with the current datetime
+            attendance, created = Attendance.objects.get_or_create(
+                emp_code=emp_data['emp_code'],
+                attd_date=timezone.now().date(),  # Use current date for attendance
+                defaults={
+                    'emp_name': emp_data['emp_name'],
+                    'in_time': timezone.now(),  # Use current datetime
+                }
+            )
+            return JsonResponse({'status': 'checked_in', 'in_time': attendance.in_time})
+
+        elif action == 'sign_out':
+            # Update the out_time for the attendance record of the current day
+            try:
+                attendance = Attendance.objects.get(emp_code=emp_data['emp_code'], attd_date=timezone.now().date())
+                attendance.out_time = timezone.now()  # Use current datetime
+                attendance.save()
+                return JsonResponse({'status': 'signed_out', 'out_time': attendance.out_time})
+            except Attendance.DoesNotExist:
+                return JsonResponse({'status': 'error', 'message': 'Check-in record not found'}, status=400)
 
     return render(request, 'success.html', {'employee': emp_data})

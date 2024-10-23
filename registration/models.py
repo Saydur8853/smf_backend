@@ -6,9 +6,10 @@ from decimal import Decimal
 from django.contrib.auth.hashers import make_password
 from django.utils.safestring import mark_safe
 from django.utils import timezone
-from datetime import datetime
+from datetime import datetime, timedelta
 from django.core.exceptions import ValidationError  
 from django.db import transaction
+from django.db.models import Max
 
 class AdminInformation(models.Model):
     phone_number_primary = models.CharField(max_length=20)
@@ -395,7 +396,7 @@ class ImageCardBlog(models.Model):
         return self.name
 
 
-from django.db.models import Max
+
 class EmployeeInfo(models.Model):
     emp_code = models.CharField(max_length=20, unique=True, editable=False) 
     photo = models.ImageField(upload_to='emp_photo/')
@@ -449,3 +450,22 @@ class TeamMemberBlock(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class Attendance(models.Model):
+    emp_code = models.CharField(max_length=20)
+    emp_name = models.CharField(max_length=100)
+    attd_date = models.DateTimeField(blank=True, null=True)
+    in_time = models.DateTimeField(blank=True, null=True)
+    out_time = models.DateTimeField(blank=True, null=True)
+
+    @property
+    def total_workhour(self):
+        if self.in_time and self.out_time:
+            total_hours = self.out_time - self.in_time
+            return total_hours
+        return None
+        
+
+    def __str__(self):
+        return f'{self.emp_name} - {self.attd_date}'

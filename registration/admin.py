@@ -1,8 +1,10 @@
 from django.contrib import admin
 from decimal import Decimal
-from .models import AdminInformation,HomePageModel,BannerModel,Global_Settings, Mosque,Bank, MobileBank,BankInfo, Qarrj_Hasana_Account,Qarrj_Hasana_Apply, Zakat_Provider,Zakat_Receiver,ImageCardBlog,EmployeeInfo,AboutUsBlock,TeamMemberBlock
+from .models import AdminInformation,HomePageModel,BannerModel,Global_Settings, Mosque,Bank, MobileBank,BankInfo, Qarrj_Hasana_Account,Qarrj_Hasana_Apply, Zakat_Provider,Zakat_Receiver,ImageCardBlog,EmployeeInfo,AboutUsBlock,TeamMemberBlock,Attendance
 from django.shortcuts import redirect
 from django.contrib import messages
+from django.utils.html import format_html
+from datetime import datetime, timedelta
 
 class AdminInformationAdmin(admin.ModelAdmin):
     list_display = ('phone_number_primary', 'phone_number_secondery', 'email_address', 'website_link')
@@ -214,3 +216,28 @@ class EmployeeInfoAdmin(admin.ModelAdmin):
 
 admin.site.register(AboutUsBlock)
 admin.site.register(TeamMemberBlock)
+class AttendanceAdmin(admin.ModelAdmin):
+    list_display = ('emp_code', 'emp_name', 'attd_date', 'in_time', 'out_time', 'total_workhour')
+    list_filter = ('attd_date',)  # Filter by date
+    search_fields = ('emp_code', 'emp_name')  # Search by employee code or name
+    readonly_fields = ('total_workhour',)  # Make the total_workhour field read-only
+
+    # Method to calculate total work hours
+    def total_workhour(self, obj):
+        if obj.out_time and obj.in_time:
+            # Extract time from datetime fields
+            in_time = obj.in_time.time()  # Ensure it's a time object
+            out_time = obj.out_time.time()  # Ensure it's a time object
+            # Combine with attd_date
+            in_datetime = datetime.combine(obj.attd_date, in_time)
+            out_datetime = datetime.combine(obj.attd_date, out_time)
+            total_hours = out_datetime - in_datetime
+            
+            # Return total hours as a string (you can format this further if needed)
+            return str(total_hours)
+        return "N/A"
+
+    total_workhour.short_description = "Total Work Hours"
+
+# Register the model and the admin class
+admin.site.register(Attendance, AttendanceAdmin)
