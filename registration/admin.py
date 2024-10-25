@@ -5,6 +5,9 @@ from django.shortcuts import redirect
 from django.contrib import messages
 from django.utils.html import format_html
 from datetime import datetime, timedelta
+import openpyxl
+from django.http import HttpResponse
+
 
 class AdminInformationAdmin(admin.ModelAdmin):
     list_display = ('phone_number_primary', 'phone_number_secondery', 'email_address', 'website_link')
@@ -216,11 +219,13 @@ class EmployeeInfoAdmin(admin.ModelAdmin):
 
 admin.site.register(AboutUsBlock)
 admin.site.register(TeamMemberBlock)
+
 class AttendanceAdmin(admin.ModelAdmin):
     list_display = ('emp_code', 'emp_name', 'attd_date', 'in_time', 'out_time', 'total_workhour')
-    list_filter = ('attd_date',)  # Filter by date
-    search_fields = ('emp_code', 'emp_name')  # Search by employee code or name
-    readonly_fields = ('total_workhour',)  # Make the total_workhour field read-only
+    list_filter = ('attd_date',)
+    search_fields = ('attd_date','emp_code', 'emp_name')
+    readonly_fields = ('total_workhour',)
+    actions = ['export_as_excel']
 
     # Method to calculate total work hours
     def total_workhour(self, obj):
@@ -238,6 +243,38 @@ class AttendanceAdmin(admin.ModelAdmin):
         return "N/A"
 
     total_workhour.short_description = "Total Work Hours"
+    # Custom action for exporting to Excel
+    def export_as_excel(self, request, queryset):
+        # Create a workbook and an active sheet
+        wb = openpyxl.Workbook()
+        ws = wb.active
+        ws.title = "Attendance Records"
+
+        # Define headers
+        headers = ['Employee Code', 'Employee Name', 'Date', 'In Time', 'Out Time', 'Total Work Hours']
+        ws.append(headers)
+
+        # Write data rows based on queryset
+        for obj in queryset:
+            total_workhour = self.total_workhour(obj)  # Call the method to get work hours
+            row = [
+                obj.emp_code,
+                obj.emp_name,
+                obj.attd_date.strftime("%Y-%m-%d") if obj.attd_date else "",
+                obj.in_time.strftime("%H:%M:%S") if obj.in_time else "",
+                obj.out_time.strftime("%H:%M:%S") if obj.out_time else "",
+                total_workhour,
+            ]
+            ws.append(row)
+
+        # Prepare response
+        response = HttpResponse(content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+        response['Content-Disposition'] = f'attachment; filename=attendance_records_{datetime.now().strftime("%Y%m%d_%H%M%S")}.xlsx'
+        wb.save(response)
+
+        return response
+
+    export_as_excel.short_description = "Export selected records to Excel"
 
 # Register the model and the admin class
 admin.site.register(Attendance, AttendanceAdmin)
