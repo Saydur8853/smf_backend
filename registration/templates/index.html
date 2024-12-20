@@ -392,18 +392,102 @@
 <div id="zakatProviderModal" class="modal">
     <div class="modal-content">
         <span class="close" id="closeZakatProviderModal">&times;</span>
-        <h3>Zakat Donation Form</h3>
+        <h3>Zakat Given Form</h3>
         <form id="zakatProviderForm" enctype="multipart/form-data" method="POST">
             {% csrf_token %}
             <!-- <div class="form-group">
                 <label for="{{ qarj_form.mosque.id_for_label }}">Mosque Name:</label>
                 {{ qarj_form.mosque }}
             </div> -->
-            <div class="form-group">
+            <!-- <div class="form-group">
                 <label>Mosque Name:</label>
                 {{ zakat_form.mosque }}
-                <!-- <input type="text" name="mosque" required> -->
+            </div> -->
+            <div class="form-group">
+                <label for="mosqueSearch">Search Mosque:</label>
+                <input type="text" id="mosqueSearch" placeholder="Search mosque..." />
             </div>
+            
+            <div class="form-group">
+                <label for="mosqueDropdown">Mosque:</label>
+                <select id="mosqueDropdown" name="mosque" required>
+                    <option value="">Select a mosque</option>
+                    {% for mosque in zakat_form.mosque.field.queryset %}
+                        <option value="{{ mosque.id }}" {% if mosque == zakat_form.mosque.value %}selected{% endif %}>
+                            {{ mosque }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+
+            <script>
+                let debounceTimeout;
+            
+                function searchMosques() {
+                    const searchValue = document.getElementById('mosqueSearch').value.trim();
+                    const dropdown = document.getElementById('mosqueDropdown');
+            
+                    // Clear existing options
+                    dropdown.innerHTML = '';
+            
+                    // If search bar is empty, show "Select a mosque" and fetch all mosques
+                    if (searchValue.length === 0) {
+                        const placeholderOption = document.createElement('option');
+                        placeholderOption.textContent = 'Select a mosque';
+                        placeholderOption.value = '';
+                        dropdown.appendChild(placeholderOption);
+            
+                        fetch('/search-mosques/?q=')
+                            .then(response => response.json())
+                            .then(data => {
+                                for (const mosque of data) {
+                                    const option = document.createElement('option');
+                                    option.value = mosque.id;
+                                    option.textContent = `${mosque.mosque_name} (${mosque.mosque_id}) - ${mosque.village}, ${mosque.district}, ${mosque.division}`;
+                                    dropdown.appendChild(option);
+                                }
+                            })
+                            .catch(error => console.error('Error fetching mosques:', error));
+                        return;
+                    }
+            
+                    // If user is typing, fetch matching mosques
+                    fetch(`/search-mosques/?q=${encodeURIComponent(searchValue)}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.length > 0) {
+                                for (const mosque of data) {
+                                    const option = document.createElement('option');
+                                    option.value = mosque.id;
+                                    option.textContent = `${mosque.mosque_id} - ${mosque.mosque_name}, ${mosque.village}, ${mosque.district}, ${mosque.division}`;
+                                    dropdown.appendChild(option);
+                                }
+                            } else {
+                                const noOption = document.createElement('option');
+                                noOption.textContent = 'No matching mosques found';
+                                noOption.disabled = true;
+                                dropdown.appendChild(noOption);
+                            }
+                        })
+                        .catch(error => console.error('Error fetching mosques:', error));
+                }
+            
+                // Debounce function to delay search execution
+                function debounceSearch(callback, delay) {
+                    return function () {
+                        clearTimeout(debounceTimeout);
+                        debounceTimeout = setTimeout(callback, delay);
+                    };
+                }
+            
+                // Attach the debounced search function to the input
+                const mosqueSearchInput = document.getElementById('mosqueSearch');
+                mosqueSearchInput.addEventListener('input', debounceSearch(searchMosques, 300)); // 300ms delay
+            </script>
+            
+        
+            
             <div class="form-group">
                 <label>Provider Name:</label>
                 <input type="text" name="name" required>
@@ -433,7 +517,7 @@
             </div>
             <br>
             <div class="form-group">
-                <label>Donation Amount:</label>
+                <label>Amount:</label>
                 <input type="number" name="donation_amount">
             </div>
             <div class="form-group">

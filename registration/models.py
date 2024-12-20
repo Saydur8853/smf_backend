@@ -92,7 +92,7 @@ class Mosque(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"#{self.mosque_id} - {self.mosque_name},{self.village},{self.district},{self.thana},{self.division}"
+        return f"#{self.mosque_id} - {self.mosque_name}, {self.village}, {self.district}, {self.thana}, {self.division}"
 
 
 # Bank Model

@@ -13,6 +13,7 @@ urlpatterns = [
     path('about/', views.about, name='about'),
     path('attendance/', views.attendance, name='attendance'),
     path('attendance/success/', views.success_page, name='success_page'),
+    path('search-mosques/', views.search_mosques, name='search-mosques'),
 
 ]
 if settings.DEBUG:

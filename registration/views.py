@@ -248,3 +248,27 @@ def success_page(request):
                 return JsonResponse({'status': 'error', 'message': 'Check-in record not found'}, status=400)
 
     return render(request, 'success.html', {'employee': emp_data})
+
+
+def search_mosques(request):
+    query = request.GET.get('q', '').strip()
+    if query:
+        mosques = Mosque.objects.filter(mosque_name__icontains=query)
+    else:
+        mosques = Mosque.objects.all()
+    
+    mosque_list = [{
+        'id': mosque.id,
+        'mosque_name': mosque.mosque_name,
+        'mosque_id': mosque.mosque_id,
+        'village': mosque.village,
+        'district': mosque.district,
+        'thana': mosque.thana,
+        'division': mosque.division,
+        # 'imam_name': mosque.imam_name,
+        # 'muazzin_name': mosque.muazzin_name,
+        # 'imam_mobile_number': mosque.imam_mobile_number,
+        # 'muazzin_mobile_number': mosque.muazzin_mobile_number,
+    } for mosque in mosques]
+    
+    return JsonResponse(mosque_list, safe=False)

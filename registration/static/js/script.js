@@ -191,7 +191,7 @@ zakatProviderBtn.onclick = function() {
 zakatReceiverBtn.onclick = function() {
     zakatModal.style.display = 'none';
     zakatReceiverModal.style.display = 'block';
-    console.log("Zakat Provider Modal Opened");
+    console.log("Zakat receiver Modal Opened");
 };
 
 // Close zakat provider modal
